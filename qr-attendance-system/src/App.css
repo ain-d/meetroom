@@ -1,0 +1,1102 @@
+/* ==========================================
+   📱 MEETROOM MOBILE FIRST CSS (Modernized UI)
+   ========================================== */
+
+/* 1. Reset & ตั้งค่าพื้นฐาน */
+:root {
+  --primary-color: #2563eb;
+  --primary-hover: #1d4ed8;
+  --primary-light: #eff6ff;
+  --danger-color: #dc2626;
+  --danger-hover: #b91c1c;
+  --success-color: #16a34a;
+  --success-light: #dcfce7;
+  --warning-color: #f59e0b;
+  --bg-color: #f1f5f9;
+  --card-bg: #ffffff;
+  --text-main: #1e293b;
+  --text-muted: #64748b;
+  --border-color: #e2e8f0;
+  --radius: 16px;
+  --radius-sm: 10px;
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+  
+  /* Modern Soft Shadows */
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.06);
+  --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.05), 0 10px 15px -3px rgba(0,0,0,0.05);
+  --shadow-lg: 0 20px 25px -5px rgba(0,0,0,0.08), 0 8px 10px -6px rgba(0,0,0,0.04);
+  --shadow-btn: 0 4px 14px rgba(37, 99, 235, 0.35);
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  font-size: 16px;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Sarabun', 'Noto Sans Thai', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ==========================================
+   2. Layout หลัก
+   ========================================== */
+.page-container {
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 20px 16px calc(20px + var(--safe-area-bottom));
+  min-height: 100vh;
+}
+
+.card {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  padding: 24px 20px;
+  box-shadow: var(--shadow-md); /* ใช้เงาสไตล์ใหม่ */
+  margin-bottom: 24px;
+  border: 1px solid rgba(255,255,255,0.8); /* เส้นขอบสีขาวอ่อนๆ ให้ดู Clean */
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* ==========================================
+   3. หน้า Login / Register
+   ========================================== */
+.register-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: linear-gradient(135deg, #eff6ff 0%, #f8fafc 100%);
+  padding-bottom: calc(20px + var(--safe-area-bottom));
+}
+
+.register-card {
+  width: 100%;
+  max-width: 420px;
+  background: white;
+  border-radius: 24px;
+  padding: 40px 28px;
+  box-shadow: var(--shadow-lg);
+  border: 1px solid rgba(255,255,255,0.9);
+}
+
+.register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.register-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-weight: 500;
+  font-size: 0.95rem;
+  color: var(--text-main);
+}
+
+.register-form input, 
+.register-form select {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  font-size: 16px;
+  color: var(--text-main);
+  background: #f8fafc;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.register-form input:focus, 
+.register-form select:focus {
+  border-color: var(--primary-color);
+  background: white;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1); /* Focus Ring สวยๆ */
+}
+
+/* ==========================================
+   4. หน้า Dashboard & การ์ดต่างๆ
+   ========================================== */
+.page-header {
+  margin-bottom: 24px;
+}
+
+.page-header h1 {
+  font-size: 1.5rem; 
+  margin: 0 0 4px 0;
+  font-weight: 700;
+}
+
+.page-header p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+.dashboard-stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  background: var(--card-bg);
+  padding: 20px 16px;
+  border-radius: var(--radius);
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-color);
+  transition: transform 0.2s;
+}
+
+.stat-card h3 {
+  font-size: 0.85rem;
+  margin: 0 0 8px 0;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.stat-card h1 {
+  font-size: 1.75rem;
+  margin: 0;
+  font-weight: 800;
+  color: var(--primary-color);
+}
+
+.dashboard-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.dashboard-menu button {
+  width: 100%;
+  justify-content: flex-start;
+  padding: 16px 20px;
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+  font-weight: 500;
+  text-align: left;
+  background: white;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+  color: var(--text-main);
+  transition: all 0.2s;
+}
+
+.dashboard-menu button:hover, .dashboard-menu button:active {
+  background: var(--primary-light);
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+.dashboard-profile {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border-radius: var(--radius);
+  margin-bottom: 24px;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-color);
+}
+
+/* ==========================================
+   5. หน้าแกลไอรูปโปรไฟล์
+   ========================================== */
+.avatar-picker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.avatar-picker input[type="file"] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+}
+
+.avatar-preview, .avatar-placeholder {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-color);
+  font-size: 40px;
+  border: 3px solid white;
+  box-shadow: var(--shadow-md);
+}
+
+/* ==========================================
+   6. หน้าจองห้อง (Gallery)
+   ========================================== */
+.room-gallery-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+.room-gallery-card {
+  background: white;
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  cursor: pointer;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(255,255,255,0.8);
+}
+
+.room-gallery-card:hover {
+  transform: translateY(-4px); /* ยกตัวเล็กน้อยเวลาชี้ */
+  box-shadow: var(--shadow-lg);
+}
+
+.room-gallery-card:active {
+  transform: scale(0.98);
+}
+
+.room-card-img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.room-gallery-card:hover .room-card-img {
+  transform: scale(1.03); /* ซูมรูปเล็กน้อยเวลาชี้ */
+}
+
+.room-card-body {
+  padding: 16px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.room-card-name { font-size: 1.1rem; margin: 0; font-weight: 600; }
+.room-card-capacity { margin: 0; font-size: 0.9rem; color: var(--text-muted); }
+
+/* ==========================================
+   7. ตาราง (Admin & History)
+   ========================================== */
+.room-table-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 0 -20px;
+  padding: 0 20px;
+}
+
+.room-table {
+  width: 100%;
+  min-width: 600px;
+  border-collapse: collapse;
+}
+
+.room-table th {
+  padding: 14px;
+  text-align: left;
+  border-bottom: 2px solid var(--border-color);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.room-table td {
+  padding: 14px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.room-table img {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+/* ==========================================
+   8. Admin Toolbar
+   ========================================== */
+.admin-toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.admin-toolbar input, .admin-toolbar select {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  font-size: 16px;
+  background: white;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.admin-toolbar input:focus, .admin-toolbar select:focus {
+  border-color: var(--primary-color);
+}
+
+/* ==========================================
+   9. ปุ่มต่างๆ (Modern Style)
+   ========================================== */
+button {
+  min-height: 48px;
+  padding: 12px 20px;
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  background: var(--primary-color);
+  color: white;
+  box-shadow: var(--shadow-btn);
+}
+
+button:hover:not(:disabled) {
+  background: var(--primary-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+}
+
+button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* Secondary Button Override */
+.secondary-button {
+  background: white;
+  color: var(--text-main);
+  border: 1.5px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+}
+.secondary-button:hover:not(:disabled) {
+  background: var(--bg-color);
+  border-color: #cbd5e1;
+  box-shadow: var(--shadow-md);
+}
+
+/* Danger Button Override */
+.danger-button {
+  background: var(--danger-color);
+  box-shadow: 0 4px 14px rgba(220, 38, 38, 0.3);
+}
+.danger-button:hover:not(:disabled) {
+  background: var(--danger-hover);
+  box-shadow: 0 6px 20px rgba(220, 38, 38, 0.4);
+}
+
+/* Logout Button Override */
+.logout-button {
+  background: transparent;
+  color: var(--danger-color);
+  box-shadow: none;
+  border: 1.5px solid var(--danger-color);
+}
+.logout-button:hover:not(:disabled) {
+  background: #fee2e2;
+  transform: none;
+  box-shadow: none;
+}
+
+/* ==========================================
+   10. สถานะ & แจ้งเตือน
+   ========================================== */
+.message {
+  padding: 14px 16px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 16px;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  font-weight: 500;
+}
+
+.status {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.facility-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  margin: 2px;
+  background: var(--bg-color);
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* ==========================================
+   11. QR Code Component (ดึงจาก Inline มาไว้ที่นี่)
+   ========================================== */
+.qr-container {
+  text-align: center; 
+  padding: 30px; 
+  background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+  border-radius: var(--radius); 
+  border: 2px dashed #cbd5e1;
+  max-width: 300px;
+  margin: 20px auto;
+  box-shadow: var(--shadow-sm);
+}
+
+.qr-container h3 { margin: 0 0 10px; color: #334155; font-size: 16px; }
+.qr-container p { margin: 0 0 20px; font-size: 14px; color: #64748b; line-height: 1.5; }
+
+.qr-box { 
+  background: white; 
+  padding: 15px; 
+  display: inline-block; 
+  border-radius: 12px;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-color);
+}
+
+.qr-url { 
+  margin: 15px 0 0; 
+  font-size: 12px; 
+  color: #94a3b8; 
+  word-break: break-all;
+  font-family: monospace;
+}
+
+.qr-print-btn {
+  margin-top: 20px;
+  background: #334155;
+  box-shadow: 0 4px 14px rgba(51, 65, 85, 0.3);
+}
+.qr-print-btn:hover {
+  background: #1e293b;
+  box-shadow: 0 6px 20px rgba(51, 65, 85, 0.4);
+}
+
+/* ==========================================
+   12. Responsive (Desktop)
+   ========================================== */
+@media (min-width: 640px) {
+  .page-container { padding: 30px 40px calc(30px + var(--safe-area-bottom)); }
+  .card { padding: 32px; }
+  
+  .dashboard-stats { grid-template-columns: repeat(4, 1fr); }
+  .room-gallery-grid { grid-template-columns: repeat(2, 1fr); }
+  .room-gallery-card { flex-direction: row; }
+  .room-card-img { width: 140px; height: 100%; }
+  .room-card-body { justify-content: center; }
+  
+  .admin-toolbar { flex-direction: row; }
+  .admin-toolbar input { flex: 1; }
+  
+  .room-table-wrapper { margin: 0; padding: 0; }
+}
+
+@media (min-width: 1024px) {
+  .room-gallery-grid { grid-template-columns: repeat(3, 1fr); }
+}
+/* ==========================================
+   13. สถานะห้องประชุม (Status Colors)
+   ========================================== */
+.status.available { background: #dcfce7; color: #166534; }
+.status.booked { background: #fee2e2; color: #991b1b; }
+.status.occupied { background: #dbeafe; color: #1e40af; }
+.status.maintenance { background: #fef9c3; color: #854d0e; }
+.status.out_of_service { background: #f1f5f9; color: #64748b; border: 1px solid #e2e8f0; }
+
+/* ==========================================
+   14. การ์ดห้องที่ไม่ว่าง / ใช้งานอยู่
+   ========================================== */
+.room-gallery-card.not-available {
+  opacity: 0.6;
+  pointer-events: none; /* กันคลิกได้แม้ JS จะกันอยู่แล้ว */
+  filter: grayscale(60%);
+  position: relative;
+}
+
+/* ==========================================
+   15. พรีวิวห้องที่เลือก (หน้าฟอร์มจอง)
+   ========================================== */
+.selected-room-preview {
+  display: flex;
+  gap: 16px;
+  padding: 16px;
+  background: var(--bg-color);
+  border-radius: var(--radius-sm);
+  margin-bottom: 24px;
+  align-items: center;
+  border: 1px solid var(--border-color);
+}
+
+.selected-room-preview img {
+  width: 100px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 8px;
+  box-shadow: var(--shadow-sm);
+}
+
+.selected-room-info h3 {
+  margin: 0 0 4px;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.selected-room-info p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.selected-room-info .facilities-list {
+  margin-top: 8px;
+}
+
+/* ==========================================
+   16. UI เสริม (Warning & Input Error & Actions)
+   ========================================== */
+.capacity-warning {
+  margin: 6px 0 0;
+  font-size: 0.85rem;
+  color: var(--danger-color);
+  font-weight: 600;
+}
+
+.input-error {
+  border-color: var(--danger-color) !important;
+  background: #fef2f2 !important;
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.form-actions button {
+  flex: 1;
+}
+
+.text-center {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-muted);
+}
+
+.text-error {
+  color: var(--danger-color);
+}
+/* ==========================================
+   17. หน้า Login & Register (เสริมความสวย)
+   ========================================== */
+.register-header {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.eyebrow {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--primary-color);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  margin: 0 0 8px;
+}
+
+.register-header h1 {
+  margin: 0 0 8px;
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--text-main);
+}
+
+.register-header p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+.helper-text {
+  text-align: center;
+  margin-top: 24px;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.helper-text a {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.helper-text a:hover {
+  text-decoration: underline;
+}
+
+.login-qr-wrapper {
+  margin-top: 30px;
+  padding-top: 25px;
+  border-top: 1px solid var(--border-color);
+}
+
+/* ==========================================
+   18. Profile & Avatar (Dashboard)
+   ========================================== */
+.dashboard-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid white;
+  box-shadow: var(--shadow-md);
+  flex-shrink: 0;
+}
+
+.dashboard-avatar-placeholder {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #dbeafe, #eff6ff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  border: 3px solid white;
+  box-shadow: var(--shadow-md);
+  flex-shrink: 0;
+}
+
+.role-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  background: var(--primary-light);
+  color: var(--primary-color);
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-top: 6px;
+}
+
+/* ==========================================
+   19. Section Title & Utility Classes
+   ========================================== */
+.section-title {
+  margin-top: 30px;
+  margin-bottom: 16px;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.text-danger { color: var(--danger-color) !important; }
+.text-primary { color: var(--primary-color) !important; }
+/* ==========================================
+   20. ฟอร์มจัดการอุปกรณ์ (Rooms Admin)
+   ========================================== */
+.facility-input-group {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.facility-input-group input {
+  flex: 1;
+  padding: 12px 16px;
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  font-size: 16px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.facility-input-group input:focus {
+  border-color: var(--primary-color);
+}
+
+.btn-add-facility {
+  padding: 0 20px !important;
+  min-height: 48px !important;
+  border-radius: var(--radius-sm) !important;
+  font-size: 1.2rem !important;
+  font-weight: 700 !important;
+  flex-shrink: 0;
+}
+
+.facility-tag-list {
+  margin-top: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.facility-tag {
+  cursor: pointer;
+  background: #dbeafe;
+  color: #1d4ed8;
+  border: 1px solid #93c5fd;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.facility-tag:hover {
+  background: #fee2e2;
+  color: #991b1b;
+  border-color: #fca5a5;
+}
+
+.text-uppercase {
+  text-transform: uppercase;
+}
+
+.full-width {
+  flex: 1 1 100%;
+}
+
+/* ==========================================
+   21. ตารางแอดมิน (ปุ่ม Actions)
+   ========================================== */
+.table-actions {
+  display: flex;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.table-actions button {
+  min-height: 36px !important;
+  padding: 6px 14px !important;
+  font-size: 0.85rem !important;
+  border-radius: 8px !important;
+  box-shadow: none !important;
+}
+
+.table-actions .danger-button {
+  color: var(--danger-color);
+  background: transparent;
+  border: 1px solid var(--danger-color) !important;
+}
+.table-actions .danger-button:hover {
+  background: var(--danger-color);
+  color: white;
+}
+
+.text-empty {
+  color: #94a3b8;
+  font-size: 0.85rem;
+  font-style: italic;
+}
+
+.img-placeholder {
+  width: 50px;
+  height: 50px;
+  background: var(--bg-color);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+.table-title {
+  margin-bottom: 16px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+/* ==========================================
+   22. สีสถานะเพิ่มเติม (สำหรับ User)
+   ========================================== */
+.text-warning { color: var(--warning-color) !important; }
+/* ==========================================
+   23. Form Elements States
+   ========================================== */
+.select-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background-color: var(--bg-color);
+}
+
+.full-width {
+  width: 100%;
+}
+/* ==========================================
+   24. ปฏิทิน (Calendar)
+   ========================================== */
+.cal-toolbar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.cal-nav {
+  display: flex;
+  gap: 8px;
+}
+
+.cal-btn-icon {
+  min-height: 40px !important;
+  padding: 0 16px !important;
+  font-size: 1rem;
+  background: white !important;
+  color: var(--text-main) !important;
+  border: 1px solid var(--border-color) !important;
+  box-shadow: none !important;
+  border-radius: 8px !important;
+}
+.cal-btn-icon:hover { background: var(--bg-color) !important; }
+
+.cal-btn-today {
+  min-height: 40px !important;
+  padding: 0 20px !important;
+  font-size: 0.9rem;
+  background: var(--primary-light) !important;
+  color: var(--primary-color) !important;
+  border: 1px solid transparent !important;
+  box-shadow: none !important;
+  border-radius: 8px !important;
+  font-weight: 600;
+}
+
+.cal-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.cal-tabs {
+  display: flex;
+  background: var(--bg-color);
+  border-radius: 10px;
+  padding: 4px;
+}
+
+.cal-tabs button {
+  flex: 1;
+  min-height: 36px !important;
+  padding: 0 12px !important;
+  font-size: 0.85rem;
+  background: transparent !important;
+  color: var(--text-muted) !important;
+  box-shadow: none !important;
+  border-radius: 8px !important;
+  border: none !important;
+  font-weight: 500;
+}
+
+.cal-tabs button.active {
+  background: white !important;
+  color: var(--text-main) !important;
+  box-shadow: var(--shadow-sm) !important;
+  font-weight: 600;
+}
+
+/* Grid ปฏิทิน */
+.cal-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  margin-bottom: 4px;
+}
+
+.cal-weekday {
+  text-align: center;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  padding: 8px 0;
+}
+
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.cal-cell {
+  position: relative;
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  border: none;
+  background: transparent;
+  color: var(--text-main);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: none !important;
+  padding: 4px;
+}
+
+.cal-cell:not(.empty):hover {
+  background: var(--bg-color);
+}
+
+.cal-cell.is-today {
+  background: var(--primary-light);
+  font-weight: 700;
+}
+
+.cal-cell.is-selected {
+  background: var(--primary-color) !important;
+  color: white !important;
+}
+
+.cal-cell.empty {
+  cursor: default;
+}
+
+.cal-num {
+  font-size: 0.95rem;
+  line-height: 1;
+}
+
+.cal-badge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--primary-color);
+  color: white;
+  font-size: 0.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+
+.cal-cell.is-selected .cal-badge {
+  background: rgba(255,255,255,0.3);
+}
+
+/* หน้ารายวัน */
+.cal-day-panel {
+  margin-top: 10px;
+}
+
+.cal-day-header {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-main);
+  margin: 0 0 20px 0;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.cal-empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-muted);
+}
+
+.cal-event-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cal-event-card {
+  display: flex;
+  gap: 16px;
+  padding: 16px;
+  background: white;
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-sm);
+  border-left: 5px solid var(--border-color);
+  align-items: flex-start;
+  transition: transform 0.2s;
+}
+.cal-event-card:hover { transform: translateY(-2px); }
+
+/* เส้นขอบสีตามสถานะ */
+.cal-event-card.border-left-approved { border-left-color: var(--success-color); }
+.cal-event-card.border-left-pending { border-left-color: var(--warning-color); }
+.cal-event-card.border-left-cancelled { border-left-color: #94a3b8; }
+.cal-event-card.border-left-completed { border-left-color: var(--primary-color); }
+
+.event-time-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-width: 60px;
+  color: var(--text-main);
+  font-size: 0.9rem;
+}
+.event-time-block span { font-size: 0.75rem; color: var(--text-muted); }
+
+.event-details {
+  flex: 1;
+}
+.event-details h4 { margin: 0 0 6px; font-size: 1rem; }
+.event-details p { margin: 0 0 2px; font-size: 0.85rem; color: var(--text-muted); }
+
+.cal-event-card .status {
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.cal-actions {
+  margin-top: 30px;
+  text-align: center;
+}
+
+/* Responsive สำหรับปฏิทินบนจอใหญ่ */
+@media (min-width: 640px) {
+  .cal-toolbar {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+  .cal-nav { order: 1; }
+  .cal-title { order: 2; }
+  .cal-tabs { order: 3; }
+  
+  .cal-cell { aspect-ratio: auto; min-height: 60px; }
+}
