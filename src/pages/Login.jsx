@@ -1,14 +1,38 @@
-import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { supabase } from "../lib/supabase"
-import AppQRCode from '../components/AppQRCode'
 
 function Login() {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const roomId = searchParams.get('room') // ✅ room id ที่มากับ QR (ถ้ามี)
+
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
+  const [checkingSession, setCheckingSession] = useState(true)
   const [message, setMessage] = useState({ type: '', text: '' })
+
+  // ✅ ปลายทางหลัง login สำเร็จ: ถ้ามี roomId ให้พาไปหน้าจองห้องนั้นเลย ไม่งั้นไปหน้า dashboard ปกติ
+  const getRedirectPath = () => (roomId ? `/booking?room=${roomId}` : '/dashboard')
+
+  // ✅ ถ้า login ค้างอยู่แล้ว (session ยังไม่หมดอายุ) สแกน QR แล้วข้ามหน้า login ไปเลย
+  useEffect(() => {
+    let mounted = true
+    const checkExistingSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (mounted) {
+        if (session) {
+          navigate(getRedirectPath(), { replace: true })
+        } else {
+          setCheckingSession(false)
+        }
+      }
+    }
+    checkExistingSession()
+    return () => { mounted = false }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const handleSubmit = async (event) => {
     event.preventDefault()
@@ -38,7 +62,11 @@ function Login() {
       return
     }
 
-    navigate('/dashboard')
+    navigate(getRedirectPath())
+  }
+
+  if (checkingSession) {
+    return <p style={{ textAlign: 'center', padding: 30 }}>กำลังตรวจสอบสถานะ...</p>
   }
 
   return (
@@ -47,7 +75,11 @@ function Login() {
         <div className="register-header">
           <p className="eyebrow">Meetroom</p>
           <h1>เข้าสู่ระบบ</h1>
-          <p>ล็อกอินเพื่อเข้าใช้งานระบบจองห้องประชุม</p>
+          <p>
+            {roomId
+              ? 'เข้าสู่ระบบเพื่อจองห้องประชุมนี้'
+              : 'ล็อกอินเพื่อเข้าใช้งานระบบจองห้องประชุม'}
+          </p>
         </div>
 
         <form className="register-form" onSubmit={handleSubmit}>
@@ -83,14 +115,8 @@ function Login() {
         )}
 
         <p className="helper-text">
-          ยังไม่มีบัญชี? <Link to="/register">สมัครสมาชิก</Link>
+          ยังไม่มีบัญชี? <Link to={roomId ? `/register?room=${roomId}` : '/register'}>สมัครสมาชิก</Link>
         </p>
-
-        {/* ✅ เปลี่ยนจาก Inline Style เป็น Class */}
-        <div className="login-qr-wrapper">
-          <AppQRCode />
-        </div>
-        
       </section>
     </main>
   )

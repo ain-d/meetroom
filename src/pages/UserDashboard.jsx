@@ -1,9 +1,7 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 
 function UserDashboard({ profile }) {
-  const navigate = useNavigate()
   const [stats, setStats] = useState({ myPending: 0, myApproved: 0 })
 
   useEffect(() => {
@@ -26,14 +24,17 @@ function UserDashboard({ profile }) {
   }, [])
 
   return (
-    <main className="page-container">
-      <section className="card">
-        <div className="page-header">
-          <h1>🏢 Meetroom</h1>
-          <p>ระบบจองห้องประชุม</p>
+    <main className="page-container dashboard-shell">
+      <section className="card dashboard-card">
+        <div className="page-header dashboard-header">
+          <div>
+            <h1>🏢 Meetroom</h1>
+            <p>ระบบจองห้องประชุม</p>
+          </div>
+          <span className="dashboard-pill">Workspace</span>
         </div>
 
-        <div className="dashboard-profile">
+        <div className="dashboard-profile dashboard-profile-card">
           {profile?.avatar_url ? (
             <img src={profile.avatar_url} alt="avatar" className="dashboard-avatar" />
           ) : (
@@ -58,18 +59,6 @@ function UserDashboard({ profile }) {
           </div>
         </div>
 
-        {/* ✅ ใช้ Class แทน Inline Style */}
-        <h2 className="section-title">เมนูของฉัน</h2>
-        <div className="dashboard-menu">
-          <button onClick={() => navigate('/booking')}>📅 จองห้องประชุม</button>
-          <button onClick={() => navigate('/booking-history')}>📄 ประวัติการจองของฉัน</button>
-          <button onClick={() => navigate('/calendar')}>🗓 ดูปฏิทินห้องว่าง</button>
-          <button onClick={() => navigate('/profile')}>👤 โปรไฟล์ของฉัน</button>
-        </div>
-
-        <button className="logout-button" onClick={async () => { await supabase.auth.signOut(); navigate('/login') }}>
-          🚪 ออกจากระบบ
-        </button>
       </section>
     </main>
   )

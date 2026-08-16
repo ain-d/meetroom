@@ -68,7 +68,7 @@ function RoomKiosk() {
             <button onClick={handleWalkIn}>📅 จองห้องตอนนี้ (Walk-in)</button>
           </>
         )}
-        <button className="secondary-button full-width" style={{ marginTop: 15 }} onClick={() => navigate('/dashboard')}>กลับไปหน้าหลัก</button>
+        
       </section>
     </main>
   )

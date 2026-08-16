@@ -26,14 +26,17 @@ function AdminDashboard({ profile }) {
   }, [])
 
   return (
-    <main className="page-container">
-      <section className="card">
-        <div className="page-header">
-          <h1>🛠️ Admin Dashboard</h1>
-          <p>ภาพรวมระบบจองห้องประชุม</p>
+    <main className="page-container dashboard-shell">
+      <section className="card dashboard-card">
+        <div className="page-header dashboard-header">
+          <div>
+            <h1>🛠️ Admin Dashboard</h1>
+            <p>ภาพรวมระบบจองห้องประชุม</p>
+          </div>
+          <span className="dashboard-pill">Control Center</span>
         </div>
 
-        <div className="dashboard-profile">
+        <div className="dashboard-profile dashboard-profile-card">
           {profile?.avatar_url ? <img src={profile.avatar_url} alt="avatar" className="dashboard-avatar" /> : <div className="dashboard-avatar-placeholder">🛡️</div>}
           <div>
             <h2>{profile.full_name}</h2>
@@ -51,15 +54,7 @@ function AdminDashboard({ profile }) {
         </div>
 
         {/* ✅ เปลี่ยนจาก Inline Style เป็น Class */}
-        <h2 className="section-title">จัดการระบบ</h2>
-        <div className="dashboard-menu">
-          <button onClick={() => navigate('/admin/rooms')}>🏢 จัดการห้องประชุม</button>
-          <button onClick={() => navigate('/admin/bookings')}>📋 อนุมัติการจอง {stats.pending > 0 && `(${stats.pending})`}</button>
-          <button onClick={() => navigate('/admin/users')}>👥 จัดการผู้ใช้งาน</button>
-          <button onClick={() => navigate('/reports')}>📊 ดูรายงาน</button>
-        </div>
-
-        <button className="logout-button" onClick={async () => { await supabase.auth.signOut(); navigate('/login') }}>🚪 ออกจากระบบ</button>
+        
       </section>
     </main>
   )

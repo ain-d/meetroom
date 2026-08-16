@@ -74,7 +74,7 @@ function BookingAdmin() {
 
   const updateBookingStatus = async (bookingId, status) => {
     setUpdatingId(bookingId)
-    if (status === 'cancelled' && !window.confirm('ยืนยันการยกเลิกการจอง?')) {
+    if (status === 'rejected' && !window.confirm('ยืนยันการปฏิเสธการจอง?')) {
       setUpdatingId(null)
       return
     }
@@ -86,8 +86,8 @@ function BookingAdmin() {
     if (status === 'approved') {
       payload.approved_by = user.id
       payload.approved_at = new Date().toISOString()
-    } else if (status === 'cancelled') {
-      // กลับไปใช้วิธีเดิม (ล้าง approved_by/approved_at) เพื่อไม่พึ่งคอลัมน์ที่อาจยังไม่มีในตาราง
+    } else if (status === 'rejected') {
+      // ปฏิเสธโดย Admin: ล้าง approved_by/approved_at
       payload.approved_by = null
       payload.approved_at = null
     }
@@ -120,12 +120,19 @@ function BookingAdmin() {
       return
     }
 
-    setMessage({ type: 'success', text: status === 'approved' ? 'อนุมัติเรียบร้อย' : 'ยกเลิกเรียบร้อย' })
+    setMessage({ type: 'success', text: status === 'approved' ? 'อนุมัติเรียบร้อย' : 'ปฏิเสธเรียบร้อย' })
     await fetchBookings()
     setUpdatingId(null)
   }
 
   const formatDateTime = (date) => new Date(date).toLocaleString('th-TH', { dateStyle: 'medium', timeStyle: 'short' })
+
+  const statusLabel = (status) => {
+    if (status === 'approved') return 'อนุมัติแล้ว'
+    if (status === 'cancelled') return 'ยกเลิก'
+    if (status === 'rejected') return 'ปฏิเสธ'
+    return 'รออนุมัติ'
+  }
 
   const filteredBookings = bookings.filter((b) => {
     const keyword = search.toLowerCase()
@@ -153,6 +160,7 @@ function BookingAdmin() {
             <option value="all">ทุกสถานะ</option>
             <option value="pending">รออนุมัติ</option>
             <option value="approved">อนุมัติแล้ว</option>
+            <option value="rejected">ปฏิเสธแล้ว</option>
             <option value="cancelled">ยกเลิกแล้ว</option>
           </select>
         </div>
@@ -180,7 +188,9 @@ function BookingAdmin() {
             <tbody>
               {loading ? <tr><td colSpan="7" className="text-center">กำลังโหลด...</td></tr> :
                filteredBookings.length === 0 ? <tr><td colSpan="7" className="text-center">ไม่พบข้อมูล</td></tr> :
-               filteredBookings.map((b) => (
+               filteredBookings.map((b) => {
+                const isDecided = b.status !== 'pending'
+                return (
                 <tr key={b.id}>
                   <td>{b.rooms?.image_url ? <img src={b.rooms.image_url} alt={b.rooms.name} /> : <div className="img-placeholder">ไม่มีรูป</div>}</td>
                   <td>
@@ -195,18 +205,19 @@ function BookingAdmin() {
                       <small>ถึง {formatDateTime(b.end_time)}</small>
                     </div>
                   </td>
-                  <td><span className={`status ${b.status}`}>{b.status === 'approved' ? 'อนุมัติแล้ว' : b.status === 'cancelled' ? 'ยกเลิก' : 'รออนุมัติ'}</span></td>
+                  <td><span className={`status ${b.status}`}>{statusLabel(b.status)}</span></td>
                   <td>{b.approved_by_name || '-'}</td>
                   <td>
                     <div className="table-actions">
-                      <button disabled={updatingId === b.id || b.status === 'approved'} onClick={() => updateBookingStatus(b.id, 'approved')}>
+                      <button disabled={updatingId === b.id || isDecided} onClick={() => updateBookingStatus(b.id, 'approved')}>
                         {updatingId === b.id ? '...' : 'อนุมัติ'}
                       </button>
-                      <button className="danger-button" disabled={updatingId === b.id || b.status === 'cancelled'} onClick={() => updateBookingStatus(b.id, 'cancelled')}>ยกเลิก</button>
+                      <button className="danger-button" disabled={updatingId === b.id || isDecided} onClick={() => updateBookingStatus(b.id, 'rejected')}>ปฏิเสธ</button>
                     </div>
                   </td>
                 </tr>
-              ))}
+                )
+              })}
             </tbody>
           </table>
         </div>

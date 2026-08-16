@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
+import ThaiDateTimePicker from '../components/ThaiDateTimePicker'
 
 // แปลสถานะ
 const getStatusLabel = (status) => {
@@ -8,7 +9,7 @@ const getStatusLabel = (status) => {
   return map[status] || status
 }
 
-// ฟังก์ชันช่วยสำหรับห้ามจองย้อนหลัง
+// ฟังก์ชันช่วยสำหรับห้ามจองย้อนหลัง (ใช้เป็นค่าเริ่มต้นให้ ThaiDateTimePicker เท่านั้น)
 const getMinDateTime = () => {
   const now = new Date()
   now.setMinutes(now.getMinutes() - now.getTimezoneOffset())
@@ -17,11 +18,17 @@ const getMinDateTime = () => {
 
 function Booking() {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const roomIdFromQR = searchParams.get('room')
+
   const [rooms, setRooms] = useState([])
   const [selectedRoom, setSelectedRoom] = useState(null)
   const [form, setForm] = useState({ title: '', start_time: '', end_time: '', attendees_count: '', purpose: '' })
   const [message, setMessage] = useState({ type: '', text: '' })
   const [loading, setLoading] = useState(false)
+
+  // ✅ คำนวณครั้งเดียวตอน mount พอ
+  const [minDateTime] = useState(getMinDateTime())
 
   useEffect(() => {
     let mounted = true
@@ -31,23 +38,49 @@ function Booking() {
 
       const { data, error } = await supabase
         .from('rooms')
-        .select('id, name, capacity, image_url, is_active, facilities, room_status(status)')
+        .select('id, name, capacity, min_capacity, image_url, is_active, facilities, room_status(status)')
         .eq('is_active', true)
         .order('name')
 
       if (!mounted) return
-      if (error) setMessage({ type: 'error', text: `โหลดข้อมูลห้องไม่สำเร็จ: ${error.message}` })
-      else setRooms(data || [])
+      if (error) {
+        setMessage({ type: 'error', text: `โหลดข้อมูลห้องไม่สำเร็จ: ${error.message}` })
+        setLoading(false)
+        return
+      }
+
+      setRooms(data || [])
+
+      if (roomIdFromQR) {
+        const targetRoom = (data || []).find((r) => r.id === roomIdFromQR)
+        if (targetRoom) {
+          if (targetRoom.room_status?.status === 'available') {
+            setSelectedRoom(targetRoom)
+          } else {
+            setMessage({ type: 'error', text: `ห้อง "${targetRoom.name}" ไม่พร้อมให้จองในขณะนี้ (${getStatusLabel(targetRoom.room_status?.status)})` })
+          }
+        } else {
+          setMessage({ type: 'error', text: 'ไม่พบห้องประชุมนี้ในระบบ หรือห้องถูกปิดใช้งานแล้ว' })
+        }
+      }
+
       setLoading(false)
     }
     loadRooms()
     return () => { mounted = false }
-  }, [navigate])
+  }, [navigate, roomIdFromQR])
 
   const handleChange = (e) => setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }))
 
   const checkConflict = async (roomId, startISO, endISO) => {
-    const { data, error } = await supabase.from('bookings').select('id').eq('room_id', roomId).eq('status', 'approved').lt('start_time', endISO).gt('end_time', startISO).limit(1)
+    const { data, error } = await supabase
+      .from('bookings')
+      .select('id')
+      .eq('room_id', roomId)
+      .in('status', ['pending', 'approved'])
+      .lt('start_time', endISO)
+      .gt('end_time', startISO)
+      .limit(1)
     if (error) throw new Error(error.message)
     return data?.length > 0
   }
@@ -56,14 +89,35 @@ function Booking() {
     e.preventDefault()
     setMessage({ type: '', text: '' })
     const { title, start_time, end_time, attendees_count, purpose } = form
-    
+
     if (!title || !start_time || !end_time || !attendees_count) {
       setMessage({ type: 'error', text: 'กรุณากรอกข้อมูลให้ครบ' }); return
     }
 
-    const startISO = new Date(start_time).toISOString()
-    const endISO = new Date(end_time).toISOString()
-    if (startISO >= endISO) { setMessage({ type: 'error', text: 'เวลาสิ้นสุดต้องมากกว่าเวลาเริ่มต้น' }); return }
+    const attendeesNum = Number(attendees_count)
+    const minCapacity = selectedRoom?.min_capacity ?? 1
+
+    if (attendeesNum < minCapacity) {
+      setMessage({ type: 'error', text: `ห้องนี้ต้องมีผู้เข้าร่วมอย่างน้อย ${minCapacity} คน` }); return
+    }
+    if (attendeesNum > selectedRoom?.capacity) {
+      setMessage({ type: 'error', text: `ห้องนี้รองรับได้สูงสุด ${selectedRoom.capacity} คน` }); return
+    }
+
+    const startDate = new Date(start_time)
+    const endDate = new Date(end_time)
+    const startISO = startDate.toISOString()
+    const endISO = endDate.toISOString()
+
+    // ✅ เช็คเวลาย้อนหลังด้วยโค้ดเราเอง พร้อม buffer 1 นาที
+    const now = new Date()
+    if (startDate.getTime() < now.getTime() - 60000) {
+      setMessage({ type: 'error', text: 'เวลาเริ่มต้นต้องไม่ย้อนหลังจากเวลาปัจจุบัน กรุณาเลือกเวลาใหม่' }); return
+    }
+
+    if (startISO >= endISO) {
+      setMessage({ type: 'error', text: 'เวลาสิ้นสุดต้องมากกว่าเวลาเริ่มต้น' }); return
+    }
 
     setLoading(true)
     try {
@@ -75,32 +129,32 @@ function Booking() {
       }
 
       const { data: newBooking, error } = await supabase.rpc('create_booking_with_number', {
-        p_room_id: selectedRoom.id, 
-        p_user_id: user.id, 
-        p_title: title, 
+        p_room_id: selectedRoom.id,
+        p_user_id: user.id,
+        p_title: title,
         p_purpose: purpose || null,
-        p_attendees_count: Number(attendees_count), 
-        p_start_time: startISO, 
+        p_attendees_count: attendeesNum,
+        p_start_time: startISO,
         p_end_time: endISO
       })
 
       if (error) { setMessage({ type: 'error', text: error.message }); setLoading(false); return }
-      
-      setMessage({ 
-        type: 'success', 
-        text: `จองห้องประชุมสำเร็จ! เลขคิวของคุณคือ ${newBooking.booking_number}` 
+
+      setMessage({
+        type: 'success',
+        text: `จองห้องประชุมสำเร็จ! เลขคิวของคุณคือ ${newBooking.booking_number}`
       })
-      
+
       setForm({ title: '', start_time: '', end_time: '', attendees_count: '', purpose: '' })
-      setSelectedRoom(null) 
+      setSelectedRoom(null)
     } catch (error) {
       setMessage({ type: 'error', text: error.message })
     }
     setLoading(false)
   }
 
-  // ตัวแปรเช็คจำนวนคนเกินความจุ (เอาไว้ใส่ Class)
   const isOverCapacity = form.attendees_count && Number(form.attendees_count) > selectedRoom?.capacity
+  const isUnderMinCapacity = form.attendees_count && Number(form.attendees_count) < (selectedRoom?.min_capacity ?? 1)
 
   // ================= หน้าจอ: เลือกห้อง (Gallery) =================
   if (!selectedRoom) {
@@ -112,27 +166,29 @@ function Booking() {
             <p>เลือกห้องที่คุณต้องการจอง</p>
           </div>
 
+          {message.text && <div className={`message ${message.type}`}>{message.text}</div>}
+
           {loading ? <p className="text-center">กำลังโหลดห้องประชุม...</p> : (
             <div className="room-gallery-grid">
               {rooms.map((room) => {
                 const status = room.room_status?.status
                 const isAvailable = status === 'available'
-                
+
                 return (
-                  <div 
-                    key={room.id} 
+                  <div
+                    key={room.id}
                     className={`room-gallery-card ${!isAvailable ? 'not-available' : ''}`}
                     onClick={() => isAvailable && setSelectedRoom(room)}
                   >
-                    <img 
-                      src={room.image_url || 'https://via.placeholder.com/400x200?text=No+Image'} 
-                      alt={room.name} 
-                      className="room-card-img" 
+                    <img
+                      src={room.image_url || 'https://via.placeholder.com/400x200?text=No+Image'}
+                      alt={room.name}
+                      className="room-card-img"
                     />
                     <div className="room-card-body">
                       <h3 className="room-card-name">{room.name}</h3>
-                      <p className="room-card-capacity">👥 ความจุสูงสุด {room.capacity} คน</p>
-                      
+                      <p className="room-card-capacity">👥 ความจุ {room.min_capacity ?? 1}-{room.capacity} คน</p>
+
                       {room.facilities && room.facilities.length > 0 && (
                         <div className="facilities-list">
                           {room.facilities.map((fac, index) => (
@@ -164,13 +220,12 @@ function Booking() {
           <p>กรอกข้อมูลเพื่อยืนยันการจองห้อง</p>
         </div>
 
-        {/* พรีวิวห้องที่เลือก */}
         <div className="selected-room-preview">
           <img src={selectedRoom.image_url || 'https://via.placeholder.com/150'} alt={selectedRoom.name} />
           <div className="selected-room-info">
             <h3>{selectedRoom.name}</h3>
-            <p>ความจุ: {selectedRoom.capacity} คน</p>
-            
+            <p>ความจุ: {selectedRoom.min_capacity ?? 1}-{selectedRoom.capacity} คน</p>
+
             {selectedRoom.facilities && selectedRoom.facilities.length > 0 && (
               <div className="facilities-list">
                 {selectedRoom.facilities.map((fac, index) => (
@@ -185,57 +240,54 @@ function Booking() {
 
         {message.text && <div className={`message ${message.type}`}>{message.text}</div>}
 
-        <form className="register-form" onSubmit={handleSubmit}>
+        <form className="register-form" onSubmit={handleSubmit} noValidate>
           <label>
             <span>หัวข้อการประชุม *</span>
-            <input name="title" value={form.title} onChange={handleChange} placeholder="เช่น ประชุมทีม Dev" required />
+            <input name="title" value={form.title} onChange={handleChange} placeholder="เช่น ประชุมทีม Dev" />
           </label>
           <label>
-            <span>จำนวนผู้เข้าร่วม *</span>
-            <input 
-              type="number" 
-              name="attendees_count" 
-              value={form.attendees_count} 
-              onChange={handleChange} 
-              placeholder="จำนวนคน" 
-              min="1" 
-              required 
-              className={isOverCapacity ? 'input-error' : ''}
+            <span>จำนวนผู้เข้าร่วม * (ระหว่าง {selectedRoom.min_capacity ?? 1}-{selectedRoom.capacity} คน)</span>
+            <input
+              type="number"
+              name="attendees_count"
+              value={form.attendees_count}
+              onChange={handleChange}
+              placeholder="จำนวนคน"
+              className={(isOverCapacity || isUnderMinCapacity) ? 'input-error' : ''}
             />
-            
+
             {isOverCapacity && (
               <p className="capacity-warning">
                 ⚠️ จำนวนคนเกินความจุของห้อง (สูงสุด {selectedRoom.capacity} คน)
               </p>
             )}
+            {isUnderMinCapacity && (
+              <p className="capacity-warning">
+                ⚠️ ห้องนี้ต้องมีผู้เข้าร่วมอย่างน้อย {selectedRoom.min_capacity ?? 1} คน
+              </p>
+            )}
           </label>
           <label>
             <span>เวลาเริ่มต้น *</span>
-            <input 
-              type="datetime-local" 
-              name="start_time" 
-              value={form.start_time} 
-              onChange={handleChange} 
-              required 
-              min={getMinDateTime()}
+            <ThaiDateTimePicker
+              value={form.start_time}
+              onChange={(val) => setForm((prev) => ({ ...prev, start_time: val }))}
+              minDate={new Date(minDateTime)}
             />
           </label>
           <label>
             <span>เวลาสิ้นสุด *</span>
-            <input 
-              type="datetime-local" 
-              name="end_time" 
-              value={form.end_time} 
-              onChange={handleChange} 
-              required 
-              min={form.start_time || getMinDateTime()}
+            <ThaiDateTimePicker
+              value={form.end_time}
+              onChange={(val) => setForm((prev) => ({ ...prev, end_time: val }))}
+              minDate={form.start_time ? new Date(form.start_time) : new Date(minDateTime)}
             />
           </label>
           <label>
             <span>วัตถุประสงค์ (ถ้ามี)</span>
             <input name="purpose" value={form.purpose} onChange={handleChange} placeholder="รายละเอียดเพิ่มเติม" />
           </label>
-          
+
           <div className="form-actions">
             <button type="submit" disabled={loading}>{loading ? 'กำลังบันทึก...' : 'ยืนยันการจอง'}</button>
             <button type="button" className="secondary-button" onClick={() => {

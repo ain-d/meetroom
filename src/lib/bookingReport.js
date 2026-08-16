@@ -11,6 +11,16 @@ const escapeCsvValue = (value) => {
   return stringValue
 }
 
+// ✅ รวม label สถานะไว้จุดเดียว ครบทั้ง 4 สถานะ (pending, approved, rejected, cancelled)
+const STATUS_LABELS = {
+  pending: 'รออนุมัติ',
+  approved: 'อนุมัติแล้ว',
+  rejected: 'ปฏิเสธแล้ว',
+  cancelled: 'ยกเลิกแล้ว',
+}
+
+const getStatusLabel = (status) => STATUS_LABELS[status] || 'รออนุมัติ'
+
 export const buildBookingReportRows = (bookings = []) =>
   bookings.map((booking) => ({
     bookingNo: booking.booking_number || '-',
@@ -18,7 +28,7 @@ export const buildBookingReportRows = (bookings = []) =>
     user: booking.users?.full_name || booking.user_id || '-',
     time: `${new Date(booking.start_time).toLocaleString()} - ${new Date(booking.end_time).toLocaleString()}`,
     purpose: booking.purpose || '-',
-    status: booking.status === 'approved' ? 'อนุมัติแล้ว' : booking.status === 'cancelled' ? 'ยกเลิกแล้ว' : 'รออนุมัติ',
+    status: getStatusLabel(booking.status),
     approver: booking.approved_by_name || booking.approved_by || '-',
     approvedAt: booking.approved_at ? new Date(booking.approved_at).toLocaleString() : '-',
   }))

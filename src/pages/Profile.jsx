@@ -197,9 +197,7 @@ function Profile() {
           <p style={{textAlign:'center', color:'#64748b'}}>ไม่พบข้อมูลโปรไฟล์</p>
         )}
 
-        <button className="secondary-button" style={{ marginTop: 20, width: '100%' }} onClick={() => navigate('/dashboard')}>
-          ← กลับหน้าหลัก
-        </button>
+        
       </section>
     </main>
   )

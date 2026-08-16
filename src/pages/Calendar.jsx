@@ -98,10 +98,10 @@ function Calendar() {
               <div className="cal-day-panel">
                 <h3 className="cal-day-header">{selectedDate.toLocaleDateString('th-TH', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</h3>
                 {dayBookings.length === 0 ? (<div className="cal-empty-state"><p>✨ ไม่มีการจองในวันนี้</p><button className="secondary-button" onClick={() => navigate('/booking')}>จองห้องประชุม</button></div>) : (<div className="cal-event-list">{dayBookings.map((b) => (<div key={b.id} className={`cal-event-card border-left-${b.status}`}><div className="event-time-block"><strong>{formatTime(b.start_time)}</strong><span>-</span><strong>{formatTime(b.end_time)}</strong></div><div className="event-details"><h4>{b.title || b.purpose || 'ไม่ระบุหัวข้อ'}</h4><p>🏢 {b.rooms?.name || 'ไม่ระบุห้อง'}</p><p>👤 {b.users?.full_name || 'ไม่ระบุชื่อ'}</p></div><span className={`status ${b.status}`}>{getStatusText(b.status)}</span></div>))}</div>)}
-                <div className="cal-actions"><button className="secondary-button" onClick={() => setViewMode('month')}>← กลับรายเดือน</button></div>
+                
               </div>
             )}
-            <div className="cal-actions"><button className="secondary-button" onClick={() => navigate('/dashboard')}>กลับ Dashboard</button></div>
+          
           </>
         )}
       </section>

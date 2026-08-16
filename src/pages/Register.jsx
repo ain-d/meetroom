@@ -9,11 +9,15 @@ const initialForm = {
   confirmPassword: '',
 }
 
+const MAX_FILE_SIZE = 2 * 1024 * 1024 // 2MB
+const MAX_DIMENSION = 800 // ครอปรูปให้ด้านที่ยาวสุดไม่เกิน 800px
+
 function Register() {
   const [form, setForm] = useState(initialForm)
   const [avatarFile, setAvatarFile] = useState(null)
   const [avatarPreview, setAvatarPreview] = useState('')
   const [loading, setLoading] = useState(false)
+  const [processingImage, setProcessingImage] = useState(false)
   const [message, setMessage] = useState({ type: '', text: '' })
 
   const handleChange = (event) => {
@@ -21,18 +25,89 @@ function Register() {
     setForm((prev) => ({ ...prev, [name]: value }))
   }
 
-  const handleAvatarChange = (event) => {
+  // ✅ ตรวจสอบอีเมลอย่างง่าย: ต้องมี @ และลงท้ายด้วย .com
+  const isValidEmail = (email) => {
+    const regex = /^[^\s@]+@[^\s@]+\.com$/i
+    return regex.test(email.trim())
+  }
+
+  // ✅ ครอปรูปเป็นสี่เหลี่ยมจัตุรัสตรงกลาง แล้วบีบอัดคุณภาพจนไม่เกิน 2MB
+  const cropAndCompressImage = (file) => {
+    return new Promise((resolve, reject) => {
+      const img = new Image()
+      const objectUrl = URL.createObjectURL(file)
+
+      img.onload = () => {
+        URL.revokeObjectURL(objectUrl)
+
+        // ครอปเป็นสี่เหลี่ยมจัตุรัสตรงกลางภาพก่อน
+        const side = Math.min(img.width, img.height)
+        const sx = (img.width - side) / 2
+        const sy = (img.height - side) / 2
+
+        // ย่อขนาดถ้าใหญ่เกิน MAX_DIMENSION
+        const outputSize = Math.min(side, MAX_DIMENSION)
+
+        const canvas = document.createElement('canvas')
+        canvas.width = outputSize
+        canvas.height = outputSize
+        const ctx = canvas.getContext('2d')
+        ctx.drawImage(img, sx, sy, side, side, 0, 0, outputSize, outputSize)
+
+        // ลดคุณภาพลงเรื่อยๆ จนกว่าไฟล์จะไม่เกิน MAX_FILE_SIZE
+        const tryCompress = (quality) => {
+          canvas.toBlob(
+            (blob) => {
+              if (!blob) {
+                reject(new Error('ไม่สามารถประมวลผลรูปภาพได้'))
+                return
+              }
+              if (blob.size <= MAX_FILE_SIZE || quality <= 0.3) {
+                const compressedFile = new File([blob], file.name.replace(/\.[^.]+$/, '.jpg'), {
+                  type: 'image/jpeg',
+                })
+                resolve(compressedFile)
+              } else {
+                tryCompress(quality - 0.1)
+              }
+            },
+            'image/jpeg',
+            quality
+          )
+        }
+        tryCompress(0.9)
+      }
+
+      img.onerror = () => {
+        URL.revokeObjectURL(objectUrl)
+        reject(new Error('ไฟล์รูปภาพไม่ถูกต้อง'))
+      }
+
+      img.src = objectUrl
+    })
+  }
+
+  const handleAvatarChange = async (event) => {
     const file = event.target.files?.[0]
     if (!file) return
 
-    if (file.size > 2 * 1024 * 1024) {
-      setMessage({ type: 'error', text: 'ไฟล์ภาพต้องมีขนาดไม่เกิน 2MB' })
+    if (!file.type.startsWith('image/')) {
+      setMessage({ type: 'error', text: 'กรุณาเลือกไฟล์รูปภาพเท่านั้น' })
       return
     }
 
-    setAvatarFile(file)
-    setAvatarPreview(URL.createObjectURL(file))
     setMessage({ type: '', text: '' })
+    setProcessingImage(true)
+
+    try {
+      const processedFile = await cropAndCompressImage(file)
+      setAvatarFile(processedFile)
+      setAvatarPreview(URL.createObjectURL(processedFile))
+    } catch (error) {
+      setMessage({ type: 'error', text: error.message || 'ประมวลผลรูปภาพไม่สำเร็จ' })
+    } finally {
+      setProcessingImage(false)
+    }
   }
 
   const handleSubmit = async (event) => {
@@ -40,6 +115,12 @@ function Register() {
 
     if (!form.fullName.trim()) {
       setMessage({ type: 'error', text: 'กรุณากรอกชื่อ-นามสกุล' })
+      return
+    }
+
+    // ✅ เช็ครูปแบบอีเมล ต้องมี @ และ .com
+    if (!isValidEmail(form.email)) {
+      setMessage({ type: 'error', text: 'กรุณากรอกอีเมลให้ถูกต้อง (ต้องมี @ และลงท้ายด้วย .com)' })
       return
     }
 
@@ -106,7 +187,7 @@ function Register() {
 
         <form className="register-form" onSubmit={handleSubmit}>
           <label className="avatar-picker">
-            <input type="file" accept="image/*" onChange={handleAvatarChange} />
+            <input type="file" accept="image/*" onChange={handleAvatarChange} disabled={processingImage} />
             <div className="avatar-preview">
               {avatarPreview ? (
                 <img src={avatarPreview} alt="ตัวอย่างรูปโปรไฟล์" />
@@ -114,7 +195,7 @@ function Register() {
                 <div className="avatar-placeholder">+</div>
               )}
             </div>
-            <span>เลือกรูปโปรไฟล์ (ไม่บังคับ)</span>
+            <span>{processingImage ? 'กำลังประมวลผลรูป...' : 'เลือกรูปโปรไฟล์ (ไม่บังคับ)'}</span>
           </label>
 
           <label>
@@ -137,7 +218,7 @@ function Register() {
             <input type="password" name="confirmPassword" value={form.confirmPassword} onChange={handleChange} placeholder="พิมพ์รหัสผ่านอีกครั้ง" minLength="6" required />
           </label>
 
-          <button type="submit" disabled={loading}>
+          <button type="submit" disabled={loading || processingImage}>
             {loading ? 'กำลังสร้างบัญชี...' : 'สมัครสมาชิก'}
           </button>
         </form>
@@ -154,4 +235,4 @@ function Register() {
   )
 }
 
-export default Register 
+export default Register

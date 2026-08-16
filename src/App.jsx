@@ -15,8 +15,16 @@ import Profile from './pages/Profile'
 import UsersAdmin from './pages/UsersAdmin'
 import Reports from './pages/Reports'
 import BookingUsage from './pages/BookingUsage'
-import CheckInPage from './pages/CheckInPage' 
+import Layout from './components/Layout'
+
 import RoomKiosk from './pages/RoomKiosk'
+import AppQRCode from './components/AppQRCode'
+
+// ✅ หน้าใหม่: ติดต่อเรา / แจ้งปัญหาห้อง / จัดการปัญหาห้อง (แอดมิน) / ตั้งค่าข้อมูลติดต่อ (แอดมิน)
+import Contact from './pages/Contact'
+import ReportIssue from './pages/ReportIssue'
+import IssuesAdmin from './pages/IssuesAdmin'
+import ContactAdmin from './pages/ContactAdmin'
 
 import Notifications from './components/Notifications'
 import useBookingNotifications from './hooks/useBookingNotifications'
@@ -96,24 +104,31 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
-        <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-        <Route path="/booking" element={<ProtectedRoute><Booking /></ProtectedRoute>} />
-        <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-        <Route path="/calendar" element={<ProtectedRoute><Calendar /></ProtectedRoute>} />
-        <Route path="/booking-history" element={<ProtectedRoute><BookingHistory /></ProtectedRoute>} />
-        <Route path="/booking/:id/usage" element={<ProtectedRoute><BookingUsage /></ProtectedRoute>} />
+        <Route path="/dashboard" element={<ProtectedRoute><Layout><Dashboard /></Layout></ProtectedRoute>} />
+<Route path="/booking" element={<ProtectedRoute><Layout><Booking /></Layout></ProtectedRoute>} />
+<Route path="/profile" element={<ProtectedRoute><Layout><Profile /></Layout></ProtectedRoute>} />
+<Route path="/calendar" element={<ProtectedRoute><Layout><Calendar /></Layout></ProtectedRoute>} />
+<Route path="/booking-history" element={<ProtectedRoute><Layout><BookingHistory /></Layout></ProtectedRoute>} />
+<Route path="/booking/:id/usage" element={<ProtectedRoute><Layout><BookingUsage /></Layout></ProtectedRoute>} />
 
-        <Route path="/admin/rooms" element={<RoleProtectedRoute requireAdmin={true}><RoomsAdmin /></RoleProtectedRoute>} />
-        <Route path="/admin/bookings" element={<RoleProtectedRoute requireAdmin={true}><BookingAdmin /></RoleProtectedRoute>} />
-        <Route path="/admin/users" element={<RoleProtectedRoute requireAdmin={true}><UsersAdmin /></RoleProtectedRoute>} />
-        <Route path="/reports" element={<RoleProtectedRoute requireAdmin={true}><Reports /></RoleProtectedRoute>} />
-        <Route path="/checkin/:id" element={<ProtectedRoute><CheckInPage /></ProtectedRoute>} />
-        <Route path="/kiosk/:roomId" element={<ProtectedRoute><RoomKiosk /></ProtectedRoute>} />
-        
-        {/* ✅ แก้ช่องโหว่: ใส่ RoleProtectedRoute ให้แล้ว (ไม่มีคอมเมนต์ทำลาย JSX) */}
-        <Route path="/admin/setup" element={<RoleProtectedRoute requireAdmin={true}><AdminSetup /></RoleProtectedRoute>} />
+{/* ✅ ติดต่อเรา: ทั้งผู้ใช้และแอดมินเข้าได้ (แค่ล็อกอิน ไม่ต้องเป็นแอดมิน) */}
+<Route path="/contact" element={<ProtectedRoute><Layout><Contact /></Layout></ProtectedRoute>} />
+{/* ✅ แจ้งปัญหาห้อง: สำหรับผู้ใช้ทั่วไป (แอดมินเข้าได้เช่นกันเพราะไม่ได้บังคับ role) */}
+<Route path="/report-issue" element={<ProtectedRoute><Layout><ReportIssue /></Layout></ProtectedRoute>} />
 
-        <Route path="*" element={<Navigate to="/dashboard" replace />} />
+<Route path="/admin/rooms" element={<RoleProtectedRoute requireAdmin={true}><Layout><RoomsAdmin /></Layout></RoleProtectedRoute>} />
+<Route path="/admin/bookings" element={<RoleProtectedRoute requireAdmin={true}><Layout><BookingAdmin /></Layout></RoleProtectedRoute>} />
+<Route path="/admin/users" element={<RoleProtectedRoute requireAdmin={true}><Layout><UsersAdmin /></Layout></RoleProtectedRoute>} />
+<Route path="/reports" element={<RoleProtectedRoute requireAdmin={true}><Layout><Reports /></Layout></RoleProtectedRoute>} />
+<Route path="/admin/qrcode" element={<RoleProtectedRoute requireAdmin={true}><Layout><AppQRCode /></Layout></RoleProtectedRoute>} />
+{/* ✅ จัดการปัญหาห้อง (เฉพาะแอดมิน) */}
+<Route path="/admin/issues" element={<RoleProtectedRoute requireAdmin={true}><Layout><IssuesAdmin /></Layout></RoleProtectedRoute>} />
+{/* ✅ ตั้งค่าข้อมูลติดต่อ (เฉพาะแอดมิน) */}
+<Route path="/admin/contact" element={<RoleProtectedRoute requireAdmin={true}><Layout><ContactAdmin /></Layout></RoleProtectedRoute>} />
+
+<Route path="/kiosk/:roomId" element={<ProtectedRoute><RoomKiosk /></ProtectedRoute>} />
+
+<Route path="/admin/setup" element={<RoleProtectedRoute requireAdmin={true}><Layout><AdminSetup /></Layout></RoleProtectedRoute>} />
       </Routes>
     </>
   )

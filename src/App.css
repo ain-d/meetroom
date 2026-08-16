@@ -1,31 +1,47 @@
 /* ==========================================
-   📱 MEETROOM MOBILE FIRST CSS (Modernized UI)
+   📱 MEETROOM — Dark Forest & Gold Theme
    ========================================== */
 
-/* 1. Reset & ตั้งค่าพื้นฐาน */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
 :root {
-  --primary-color: #2563eb;
-  --primary-hover: #1d4ed8;
-  --primary-light: #eff6ff;
-  --danger-color: #dc2626;
-  --danger-hover: #b91c1c;
-  --success-color: #16a34a;
-  --success-light: #dcfce7;
-  --warning-color: #f59e0b;
-  --bg-color: #f1f5f9;
-  --card-bg: #ffffff;
-  --text-main: #1e293b;
-  --text-muted: #64748b;
-  --border-color: #e2e8f0;
-  --radius: 16px;
-  --radius-sm: 10px;
+  --bg-color: #0a1814;
+  --bg-2: #0f221c;
+  --card-bg: rgba(21, 48, 42, 0.55);
+  --card-solid: #15302a;
+
+  --primary-color: #d4a85a;
+  --primary-hover: #e0b96e;
+  --primary-light: rgba(212, 168, 90, 0.12);
+  --primary-soft: rgba(212, 168, 90, 0.22);
+
+  --danger-color: #e57373;
+  --danger-hover: #ef5350;
+  --danger-light: rgba(229, 115, 115, 0.14);
+
+  --success-color: #6fc89a;
+  --success-light: rgba(111, 200, 154, 0.14);
+
+  --warning-color: #e8c068;
+  --warning-light: rgba(232, 192, 104, 0.14);
+
+  --text-main: #f0e9d8;
+  --text-muted: #8a9690;
+  --border-color: rgba(212, 168, 90, 0.14);
+  --border-strong: rgba(212, 168, 90, 0.32);
+
+  --radius: 20px;
+  --radius-sm: 12px;
   --safe-area-bottom: env(safe-area-inset-bottom, 0px);
-  
-  /* Modern Soft Shadows */
-  --shadow-sm: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.06);
-  --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.05), 0 10px 15px -3px rgba(0,0,0,0.05);
-  --shadow-lg: 0 20px 25px -5px rgba(0,0,0,0.08), 0 8px 10px -6px rgba(0,0,0,0.04);
-  --shadow-btn: 0 4px 14px rgba(37, 99, 235, 0.35);
+
+  --font-display: 'Space Grotesk', 'Sarabun', sans-serif;
+  --font-body: 'Plus Jakarta Sans', 'Sarabun', 'Noto Sans Thai', -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.25);
+  --shadow-md: 0 12px 30px rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 24px 50px rgba(0, 0, 0, 0.45);
+  --shadow-btn: 0 8px 20px rgba(212, 168, 90, 0.28);
 }
 
 * {
@@ -33,62 +49,68 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-html {
-  font-size: 16px;
-}
+html { font-size: 16px; }
 
 body {
   margin: 0;
   padding: 0;
-  font-family: 'Sarabun', 'Noto Sans Thai', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  background-color: var(--bg-color);
+  font-family: var(--font-body);
+  background: var(--bg-color);
+  background-image:
+    radial-gradient(circle at 15% 10%, rgba(212, 168, 90, 0.08) 0%, transparent 45%),
+    radial-gradient(circle at 85% 90%, rgba(111, 200, 154, 0.06) 0%, transparent 45%);
+  background-attachment: fixed;
   color: var(--text-main);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* ==========================================
-   2. Layout หลัก
-   ========================================== */
 .page-container {
   width: 100%;
-  max-width: 960px;
+  max-width: 1180px;
   margin: 0 auto;
-  padding: 20px 16px calc(20px + var(--safe-area-bottom));
+  padding: 24px 16px calc(24px + var(--safe-area-bottom));
   min-height: 100vh;
 }
 
+.dashboard-shell { padding-top: 16px; }
+
 .card {
   background: var(--card-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border-radius: var(--radius);
   padding: 24px 20px;
-  box-shadow: var(--shadow-md); /* ใช้เงาสไตล์ใหม่ */
+  box-shadow: var(--shadow-md);
   margin-bottom: 24px;
-  border: 1px solid rgba(255,255,255,0.8); /* เส้นขอบสีขาวอ่อนๆ ให้ดู Clean */
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border: 1px solid var(--border-color);
 }
 
-/* ==========================================
-   3. หน้า Login / Register
-   ========================================== */
+.dashboard-card { overflow: hidden; position: relative; }
+
 .register-page {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 20px;
-  background: linear-gradient(135deg, #eff6ff 0%, #f8fafc 100%);
+  background:
+    radial-gradient(circle at 30% 30%, rgba(212, 168, 90, 0.10) 0%, transparent 40%),
+    radial-gradient(circle at 70% 70%, rgba(111, 200, 154, 0.07) 0%, transparent 40%),
+    var(--bg-color);
   padding-bottom: calc(20px + var(--safe-area-bottom));
 }
 
 .register-card {
   width: 100%;
   max-width: 420px;
-  background: white;
+  background: var(--card-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border-radius: 24px;
   padding: 40px 28px;
   box-shadow: var(--shadow-lg);
-  border: 1px solid rgba(255,255,255,0.9);
+  border: 1px solid var(--border-color);
 }
 
 .register-form {
@@ -106,100 +128,126 @@ body {
   color: var(--text-main);
 }
 
-.register-form input, 
+.register-form input,
 .register-form select {
   width: 100%;
-  padding: 14px 16px;
+  padding: 13px 16px;
   border: 1.5px solid var(--border-color);
   border-radius: var(--radius-sm);
   font-size: 16px;
   color: var(--text-main);
-  background: #f8fafc;
+  background: rgba(15, 34, 28, 0.6);
   outline: none;
-  transition: all 0.2s ease;
+  transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
 }
 
-.register-form input:focus, 
+.register-form input::placeholder { color: var(--text-muted); }
+
+.register-form input:focus,
 .register-form select:focus {
   border-color: var(--primary-color);
-  background: white;
-  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1); /* Focus Ring สวยๆ */
+  background: rgba(15, 34, 28, 0.9);
+  box-shadow: 0 0 0 4px var(--primary-light);
 }
 
-/* ==========================================
-   4. หน้า Dashboard & การ์ดต่างๆ
-   ========================================== */
-.page-header {
-  margin-bottom: 24px;
+.page-header { margin-bottom: 24px; }
+
+.dashboard-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
 }
 
 .page-header h1 {
-  font-size: 1.5rem; 
+  font-family: var(--font-display);
+  font-size: 1.5rem;
   margin: 0 0 4px 0;
   font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--text-main);
 }
 
-.page-header p {
-  margin: 0;
-  color: var(--text-muted);
-  font-size: 0.95rem;
+.page-header p { margin: 0; color: var(--text-muted); font-size: 0.95rem; }
+
+.dashboard-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 14px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: var(--primary-color);
+  background: var(--primary-light);
+  border: 1px solid var(--border-strong);
 }
 
 .dashboard-stats {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-  margin-bottom: 24px;
+  gap: 14px;
+  margin-bottom: 28px;
 }
 
 .stat-card {
-  background: var(--card-bg);
-  padding: 20px 16px;
-  border-radius: var(--radius);
-  text-align: center;
+  background: var(--card-solid);
+  padding: 20px 18px;
+  border-radius: var(--radius-sm);
+  text-align: left;
   box-shadow: var(--shadow-sm);
   border: 1px solid var(--border-color);
-  transition: transform 0.2s;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+  position: relative;
+  overflow: hidden;
 }
 
+.stat-card:hover { transform: translateY(-2px); border-color: var(--border-strong); }
+
 .stat-card h3 {
-  font-size: 0.85rem;
-  margin: 0 0 8px 0;
+  font-size: 0.78rem;
+  margin: 0 0 10px 0;
   color: var(--text-muted);
-  font-weight: 500;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
 }
 
 .stat-card h1 {
-  font-size: 1.75rem;
+  font-family: var(--font-display);
+  font-size: 1.85rem;
   margin: 0;
-  font-weight: 800;
-  color: var(--primary-color);
+  font-weight: 700;
+  color: var(--text-main);
 }
 
 .dashboard-menu {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
   gap: 10px;
 }
 
 .dashboard-menu button {
   width: 100%;
   justify-content: flex-start;
-  padding: 16px 20px;
+  padding: 16px 18px;
   border-radius: var(--radius-sm);
   font-size: 1rem;
-  font-weight: 500;
+  font-weight: 600;
   text-align: left;
-  background: white;
+  background: rgba(212, 168, 90, 0.05);
   border: 1px solid var(--border-color);
-  box-shadow: var(--shadow-sm);
+  box-shadow: none;
   color: var(--text-main);
-  transition: all 0.2s;
+  transition: all 0.2s ease;
 }
 
-.dashboard-menu button:hover, .dashboard-menu button:active {
+.dashboard-menu button:hover,
+.dashboard-menu button:active {
   background: var(--primary-light);
-  border-color: var(--primary-color);
+  border-color: var(--border-strong);
   color: var(--primary-color);
 }
 
@@ -208,16 +256,25 @@ body {
   align-items: center;
   gap: 16px;
   padding: 20px;
-  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  background: var(--card-solid);
   border-radius: var(--radius);
   margin-bottom: 24px;
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-sm);
   border: 1px solid var(--border-color);
 }
 
-/* ==========================================
-   5. หน้าแกลไอรูปโปรไฟล์
-   ========================================== */
+.dashboard-profile-card { position: relative; overflow: hidden; }
+
+.dashboard-profile-card::after {
+  content: '';
+  position: absolute;
+  inset: auto -40px -50px auto;
+  width: 150px;
+  height: 150px;
+  background: radial-gradient(circle, var(--primary-light), transparent 68%);
+  pointer-events: none;
+}
+
 .avatar-picker {
   display: flex;
   flex-direction: column;
@@ -242,15 +299,12 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--bg-color);
+  background: var(--primary-light);
   font-size: 40px;
-  border: 3px solid white;
+  border: 3px solid var(--card-solid);
   box-shadow: var(--shadow-md);
 }
 
-/* ==========================================
-   6. หน้าจองห้อง (Gallery)
-   ========================================== */
 .room-gallery-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -258,36 +312,34 @@ body {
 }
 
 .room-gallery-card {
-  background: white;
+  background: var(--card-solid);
   border-radius: var(--radius);
   overflow: hidden;
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-sm);
   cursor: pointer;
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
   display: flex;
   flex-direction: column;
-  border: 1px solid rgba(255,255,255,0.8);
+  border: 1px solid var(--border-color);
 }
 
 .room-gallery-card:hover {
-  transform: translateY(-4px); /* ยกตัวเล็กน้อยเวลาชี้ */
+  transform: translateY(-4px);
   box-shadow: var(--shadow-lg);
+  border-color: var(--border-strong);
 }
 
-.room-gallery-card:active {
-  transform: scale(0.98);
-}
+.room-gallery-card:active { transform: scale(0.98); }
 
 .room-card-img {
   width: 100%;
   height: 180px;
   object-fit: cover;
-  transition: transform 0.3s ease;
+  transition: transform 0.4s ease;
+  filter: saturate(1.05);
 }
 
-.room-gallery-card:hover .room-card-img {
-  transform: scale(1.03); /* ซูมรูปเล็กน้อยเวลาชี้ */
-}
+.room-gallery-card:hover .room-card-img { transform: scale(1.05); }
 
 .room-card-body {
   padding: 16px;
@@ -297,12 +349,16 @@ body {
   gap: 8px;
 }
 
-.room-card-name { font-size: 1.1rem; margin: 0; font-weight: 600; }
+.room-card-name {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  margin: 0;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
 .room-card-capacity { margin: 0; font-size: 0.9rem; color: var(--text-muted); }
 
-/* ==========================================
-   7. ตาราง (Admin & History)
-   ========================================== */
 .room-table-wrapper {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
@@ -310,21 +366,17 @@ body {
   padding: 0 20px;
 }
 
-.room-table {
-  width: 100%;
-  min-width: 600px;
-  border-collapse: collapse;
-}
+.room-table { width: 100%; min-width: 600px; border-collapse: collapse; }
 
 .room-table th {
   padding: 14px;
   text-align: left;
   border-bottom: 2px solid var(--border-color);
-  font-size: 0.85rem;
-  font-weight: 600;
+  font-size: 0.78rem;
+  font-weight: 700;
   color: var(--text-muted);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
 }
 
 .room-table td {
@@ -333,24 +385,12 @@ body {
   border-bottom: 1px solid var(--border-color);
   font-size: 0.9rem;
   white-space: nowrap;
+  color: var(--text-main);
 }
 
-.room-table img {
-  width: 50px;
-  height: 50px;
-  object-fit: cover;
-  border-radius: 8px;
-}
+.room-table img { width: 50px; height: 50px; object-fit: cover; border-radius: 8px; }
 
-/* ==========================================
-   8. Admin Toolbar
-   ========================================== */
-.admin-toolbar {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-bottom: 16px;
-}
+.admin-toolbar { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
 
 .admin-toolbar input, .admin-toolbar select {
   width: 100%;
@@ -358,87 +398,66 @@ body {
   border: 1.5px solid var(--border-color);
   border-radius: var(--radius-sm);
   font-size: 16px;
-  background: white;
+  background: rgba(15, 34, 28, 0.6);
+  color: var(--text-main);
   outline: none;
   transition: border-color 0.2s;
 }
 
-.admin-toolbar input:focus, .admin-toolbar select:focus {
-  border-color: var(--primary-color);
-}
+.admin-toolbar input:focus, .admin-toolbar select:focus { border-color: var(--primary-color); }
 
-/* ==========================================
-   9. ปุ่มต่างๆ (Modern Style)
-   ========================================== */
 button {
   min-height: 48px;
   padding: 12px 20px;
   border-radius: var(--radius-sm);
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   transition: all 0.2s ease;
   border: none;
-  background: var(--primary-color);
-  color: white;
+  background: linear-gradient(135deg, var(--primary-color) 0%, #b89045 100%);
+  color: #1a1410;
   box-shadow: var(--shadow-btn);
+  font-family: var(--font-body);
 }
 
 button:hover:not(:disabled) {
-  background: var(--primary-hover);
   transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+  box-shadow: 0 10px 26px rgba(212, 168, 90, 0.4);
 }
 
-button:active:not(:disabled) {
-  transform: translateY(0);
-}
+button:active:not(:disabled) { transform: translateY(0); }
 
-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+button:disabled { opacity: 0.45; cursor: not-allowed; box-shadow: none; }
+
+.secondary-button {
+  background: rgba(212, 168, 90, 0.06);
+  color: var(--text-main);
+  border: 1.5px solid var(--border-color);
+  box-shadow: none;
+}
+.secondary-button:hover:not(:disabled) {
+  background: var(--primary-light);
+  border-color: var(--border-strong);
   box-shadow: none;
 }
 
-/* Secondary Button Override */
-.secondary-button {
-  background: white;
-  color: var(--text-main);
-  border: 1.5px solid var(--border-color);
-  box-shadow: var(--shadow-sm);
-}
-.secondary-button:hover:not(:disabled) {
-  background: var(--bg-color);
-  border-color: #cbd5e1;
-  box-shadow: var(--shadow-md);
-}
-
-/* Danger Button Override */
 .danger-button {
-  background: var(--danger-color);
-  box-shadow: 0 4px 14px rgba(220, 38, 38, 0.3);
+  background: var(--danger-light);
+  color: var(--danger-color);
+  border: 1.5px solid rgba(229, 115, 115, 0.3);
+  box-shadow: none;
 }
-.danger-button:hover:not(:disabled) {
-  background: var(--danger-hover);
-  box-shadow: 0 6px 20px rgba(220, 38, 38, 0.4);
-}
+.danger-button:hover:not(:disabled) { background: rgba(229, 115, 115, 0.24); box-shadow: none; }
 
-/* Logout Button Override */
 .logout-button {
   background: transparent;
   color: var(--danger-color);
   box-shadow: none;
-  border: 1.5px solid var(--danger-color);
+  border: 1.5px solid rgba(229, 115, 115, 0.4);
 }
-.logout-button:hover:not(:disabled) {
-  background: #fee2e2;
-  transform: none;
-  box-shadow: none;
-}
+.logout-button:hover:not(:disabled) { background: var(--danger-light); box-shadow: none; }
 
-/* ==========================================
-   10. สถานะ & แจ้งเตือน
-   ========================================== */
 .message {
   padding: 14px 16px;
   border-radius: var(--radius-sm);
@@ -446,14 +465,21 @@ button:disabled {
   font-size: 0.95rem;
   line-height: 1.5;
   font-weight: 500;
+  border: 1px solid transparent;
 }
 
+.message.error { background: var(--danger-light); color: #ffb4b0; border-color: rgba(229, 115, 115, 0.3); }
+.message.success { background: var(--success-light); color: #a8e8c8; border-color: rgba(111, 200, 154, 0.3); }
+
 .status {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
   padding: 4px 12px;
   border-radius: 20px;
-  font-size: 0.8rem;
-  font-weight: 600;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border: 1px solid transparent;
 }
 
 .facility-badge {
@@ -462,689 +488,629 @@ button:disabled {
   border-radius: 6px;
   font-size: 0.75rem;
   margin: 2px;
-  background: var(--bg-color);
+  background: rgba(212, 168, 90, 0.08);
   color: var(--text-muted);
   font-weight: 500;
+  border: 1px solid var(--border-color);
 }
 
-/* ==========================================
-   11. QR Code Component (ดึงจาก Inline มาไว้ที่นี่)
-   ========================================== */
 .qr-container {
-  text-align: center; 
-  padding: 30px; 
-  background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
-  border-radius: var(--radius); 
-  border: 2px dashed #cbd5e1;
+  text-align: center;
+  padding: 30px;
+  background: var(--card-solid);
+  border-radius: var(--radius);
+  border: 2px dashed var(--border-strong);
   max-width: 300px;
   margin: 20px auto;
   box-shadow: var(--shadow-sm);
 }
 
-.qr-container h3 { margin: 0 0 10px; color: #334155; font-size: 16px; }
-.qr-container p { margin: 0 0 20px; font-size: 14px; color: #64748b; line-height: 1.5; }
+.qr-container h3 { margin: 0 0 10px; color: var(--text-main); font-size: 16px; font-family: var(--font-display); font-weight: 700; }
+.qr-container p { margin: 0 0 20px; font-size: 14px; color: var(--text-muted); line-height: 1.5; }
 
-.qr-box { 
-  background: white; 
-  padding: 15px; 
-  display: inline-block; 
+.qr-box {
+  background: #f0e9d8;
+  padding: 15px;
+  display: inline-block;
   border-radius: 12px;
   box-shadow: var(--shadow-md);
   border: 1px solid var(--border-color);
 }
 
-.qr-url { 
-  margin: 15px 0 0; 
-  font-size: 12px; 
-  color: #94a3b8; 
-  word-break: break-all;
-  font-family: monospace;
-}
+.qr-url { margin: 15px 0 0; font-size: 12px; color: var(--text-muted); word-break: break-all; font-family: var(--font-mono); }
 
-.qr-print-btn {
-  margin-top: 20px;
-  background: #334155;
-  box-shadow: 0 4px 14px rgba(51, 65, 85, 0.3);
-}
-.qr-print-btn:hover {
-  background: #1e293b;
-  box-shadow: 0 6px 20px rgba(51, 65, 85, 0.4);
-}
+.qr-print-btn { margin-top: 20px; background: var(--card-solid); color: var(--text-main); box-shadow: none; border: 1.5px solid var(--border-strong); }
+.qr-print-btn:hover { background: rgba(212, 168, 90, 0.1); box-shadow: none; }
 
-/* ==========================================
-   12. Responsive (Desktop)
-   ========================================== */
 @media (min-width: 640px) {
   .page-container { padding: 30px 40px calc(30px + var(--safe-area-bottom)); }
   .card { padding: 32px; }
-  
+
   .dashboard-stats { grid-template-columns: repeat(4, 1fr); }
   .room-gallery-grid { grid-template-columns: repeat(2, 1fr); }
   .room-gallery-card { flex-direction: row; }
   .room-card-img { width: 140px; height: 100%; }
   .room-card-body { justify-content: center; }
-  
+
   .admin-toolbar { flex-direction: row; }
   .admin-toolbar input { flex: 1; }
-  
+
   .room-table-wrapper { margin: 0; padding: 0; }
 }
 
 @media (min-width: 1024px) {
   .room-gallery-grid { grid-template-columns: repeat(3, 1fr); }
 }
-/* ==========================================
-   13. สถานะห้องประชุม (Status Colors)
-   ========================================== */
-.status.available { background: #dcfce7; color: #166534; }
-.status.booked { background: #fee2e2; color: #991b1b; }
-.status.occupied { background: #dbeafe; color: #1e40af; }
-.status.maintenance { background: #fef9c3; color: #854d0e; }
-.status.out_of_service { background: #f1f5f9; color: #64748b; border: 1px solid #e2e8f0; }
 
-/* ==========================================
-   14. การ์ดห้องที่ไม่ว่าง / ใช้งานอยู่
-   ========================================== */
+.status.available { background: var(--success-light); color: #a8e8c8; border-color: rgba(111, 200, 154, 0.3); }
+.status.booked { background: var(--danger-light); color: #ffb4b0; border-color: rgba(229, 115, 115, 0.3); }
+.status.occupied { background: var(--primary-light); color: var(--primary-color); border-color: var(--border-strong); }
+.status.maintenance { background: var(--warning-light); color: #f0d189; border-color: rgba(232, 192, 104, 0.3); }
+.status.out_of_service { background: rgba(138, 150, 144, 0.12); color: var(--text-muted); border-color: rgba(138, 150, 144, 0.3); }
+
+/* สถานะการจอง (booking status) — เพิ่มเข้ามาให้ครบ เดิมไม่มี class เฉพาะเลย */
+.status.pending { background: var(--warning-light); color: #f0d189; border-color: rgba(232, 192, 104, 0.3); }
+.status.approved { background: var(--success-light); color: #a8e8c8; border-color: rgba(111, 200, 154, 0.3); }
+.status.rejected { background: var(--danger-light); color: #ffb4b0; border-color: rgba(229, 115, 115, 0.3); }
+.status.cancelled { background: rgba(138, 150, 144, 0.12); color: var(--text-muted); border-color: rgba(138, 150, 144, 0.3); }
+.status.checked_in { background: var(--primary-light); color: var(--primary-color); border-color: var(--border-strong); }
+.status.completed { background: rgba(138, 150, 144, 0.12); color: var(--text-muted); border-color: rgba(138, 150, 144, 0.3); }
+.status.no_show { background: var(--danger-light); color: #ffb4b0; border-color: rgba(229, 115, 115, 0.3); }
+
 .room-gallery-card.not-available {
-  opacity: 0.6;
-  pointer-events: none; /* กันคลิกได้แม้ JS จะกันอยู่แล้ว */
-  filter: grayscale(60%);
+  opacity: 0.55;
+  pointer-events: none;
+  filter: grayscale(40%);
   position: relative;
 }
 
-/* ==========================================
-   15. พรีวิวห้องที่เลือก (หน้าฟอร์มจอง)
-   ========================================== */
 .selected-room-preview {
   display: flex;
   gap: 16px;
   padding: 16px;
-  background: var(--bg-color);
+  background: rgba(212, 168, 90, 0.05);
   border-radius: var(--radius-sm);
   margin-bottom: 24px;
   align-items: center;
   border: 1px solid var(--border-color);
 }
 
-.selected-room-preview img {
-  width: 100px;
-  height: 80px;
-  object-fit: cover;
-  border-radius: 8px;
-  box-shadow: var(--shadow-sm);
-}
+.selected-room-preview img { width: 100px; height: 80px; object-fit: cover; border-radius: 8px; box-shadow: var(--shadow-sm); }
 
-.selected-room-info h3 {
-  margin: 0 0 4px;
-  font-size: 1.1rem;
-  font-weight: 600;
-}
+.selected-room-info h3 { margin: 0 0 4px; font-size: 1.1rem; font-weight: 700; font-family: var(--font-display); color: var(--text-main); }
+.selected-room-info p { margin: 0; font-size: 0.9rem; color: var(--text-muted); }
+.selected-room-info .facilities-list { margin-top: 8px; }
 
-.selected-room-info p {
-  margin: 0;
-  font-size: 0.9rem;
-  color: var(--text-muted);
-}
+.capacity-warning { margin: 6px 0 0; font-size: 0.85rem; color: var(--danger-color); font-weight: 600; }
 
-.selected-room-info .facilities-list {
-  margin-top: 8px;
-}
+.input-error { border-color: var(--danger-color) !important; background: rgba(229, 115, 115, 0.08) !important; }
 
-/* ==========================================
-   16. UI เสริม (Warning & Input Error & Actions)
-   ========================================== */
-.capacity-warning {
-  margin: 6px 0 0;
-  font-size: 0.85rem;
-  color: var(--danger-color);
-  font-weight: 600;
-}
+.form-actions { display: flex; gap: 12px; margin-top: 16px; }
+.form-actions button { flex: 1; }
 
-.input-error {
-  border-color: var(--danger-color) !important;
-  background: #fef2f2 !important;
-}
+.text-center { text-align: center; padding: 40px 20px; color: var(--text-muted); }
+.text-error { color: var(--danger-color); }
 
-.form-actions {
-  display: flex;
-  gap: 12px;
-  margin-top: 16px;
-}
-
-.form-actions button {
-  flex: 1;
-}
-
-.text-center {
-  text-align: center;
-  padding: 40px 20px;
-  color: var(--text-muted);
-}
-
-.text-error {
-  color: var(--danger-color);
-}
-/* ==========================================
-   17. หน้า Login & Register (เสริมความสวย)
-   ========================================== */
-.register-header {
-  text-align: center;
-  margin-bottom: 28px;
-}
+.register-header { text-align: center; margin-bottom: 28px; }
 
 .eyebrow {
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   font-weight: 700;
   color: var(--primary-color);
   text-transform: uppercase;
-  letter-spacing: 0.15em;
+  letter-spacing: 0.18em;
   margin: 0 0 8px;
 }
 
 .register-header h1 {
   margin: 0 0 8px;
-  font-size: 1.6rem;
-  font-weight: 800;
+  font-size: 1.7rem;
+  font-weight: 700;
   color: var(--text-main);
+  font-family: var(--font-display);
+  letter-spacing: -0.01em;
 }
 
-.register-header p {
-  margin: 0;
-  color: var(--text-muted);
-  font-size: 0.95rem;
-}
+.register-header p { margin: 0; color: var(--text-muted); font-size: 0.95rem; }
 
-.helper-text {
-  text-align: center;
-  margin-top: 24px;
-  font-size: 0.9rem;
-  color: var(--text-muted);
-}
+.helper-text { text-align: center; margin-top: 24px; font-size: 0.9rem; color: var(--text-muted); }
+.helper-text a { color: var(--primary-color); text-decoration: none; font-weight: 700; }
+.helper-text a:hover { text-decoration: underline; }
 
-.helper-text a {
-  color: var(--primary-color);
-  text-decoration: none;
-  font-weight: 600;
-}
+.login-qr-wrapper { margin-top: 30px; padding-top: 25px; border-top: 1px solid var(--border-color); }
 
-.helper-text a:hover {
-  text-decoration: underline;
-}
-
-.login-qr-wrapper {
-  margin-top: 30px;
-  padding-top: 25px;
-  border-top: 1px solid var(--border-color);
-}
-
-/* ==========================================
-   18. Profile & Avatar (Dashboard)
-   ========================================== */
 .dashboard-avatar {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 3px solid white;
-  box-shadow: var(--shadow-md);
-  flex-shrink: 0;
+  width: 60px; height: 60px; border-radius: 50%; object-fit: cover;
+  border: 3px solid var(--card-solid); box-shadow: var(--shadow-md); flex-shrink: 0;
 }
 
 .dashboard-avatar-placeholder {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #dbeafe, #eff6ff);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 28px;
-  border: 3px solid white;
-  box-shadow: var(--shadow-md);
-  flex-shrink: 0;
+  width: 60px; height: 60px; border-radius: 50%;
+  background: var(--primary-light);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px; border: 3px solid var(--card-solid); box-shadow: var(--shadow-md); flex-shrink: 0;
 }
 
 .role-badge {
-  display: inline-block;
-  padding: 4px 12px;
-  background: var(--primary-light);
-  color: var(--primary-color);
-  border-radius: 20px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  margin-top: 6px;
+  display: inline-block; padding: 4px 12px;
+  background: var(--primary-light); color: var(--primary-color);
+  border: 1px solid var(--border-strong);
+  border-radius: 20px; font-size: 0.8rem; font-weight: 700; margin-top: 6px;
 }
 
-/* ==========================================
-   19. Section Title & Utility Classes
-   ========================================== */
 .section-title {
-  margin-top: 30px;
-  margin-bottom: 16px;
-  font-size: 1.15rem;
-  font-weight: 700;
-  color: var(--text-main);
+  margin-top: 30px; margin-bottom: 16px; font-size: 1.1rem; font-weight: 700;
+  color: var(--text-main); font-family: var(--font-display);
 }
 
 .text-danger { color: var(--danger-color) !important; }
 .text-primary { color: var(--primary-color) !important; }
-/* ==========================================
-   20. ฟอร์มจัดการอุปกรณ์ (Rooms Admin)
-   ========================================== */
-.facility-input-group {
-  display: flex;
-  gap: 8px;
-  margin-top: 8px;
-}
+.text-warning { color: var(--warning-color) !important; }
+
+.facility-input-group { display: flex; gap: 8px; margin-top: 8px; }
 
 .facility-input-group input {
-  flex: 1;
-  padding: 12px 16px;
-  border: 1.5px solid var(--border-color);
-  border-radius: var(--radius-sm);
-  font-size: 16px;
-  outline: none;
-  transition: border-color 0.2s;
+  flex: 1; padding: 12px 16px; border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-sm); font-size: 16px; outline: none;
+  background: rgba(15, 34, 28, 0.6); color: var(--text-main); transition: border-color 0.2s;
 }
 
-.facility-input-group input:focus {
-  border-color: var(--primary-color);
-}
+.facility-input-group input:focus { border-color: var(--primary-color); }
 
 .btn-add-facility {
-  padding: 0 20px !important;
-  min-height: 48px !important;
-  border-radius: var(--radius-sm) !important;
-  font-size: 1.2rem !important;
-  font-weight: 700 !important;
-  flex-shrink: 0;
+  padding: 0 20px !important; min-height: 48px !important; border-radius: var(--radius-sm) !important;
+  font-size: 1.2rem !important; font-weight: 700 !important; flex-shrink: 0;
 }
 
-.facility-tag-list {
-  margin-top: 12px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
+.facility-tag-list { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 6px; }
 
 .facility-tag {
-  cursor: pointer;
-  background: #dbeafe;
-  color: #1d4ed8;
-  border: 1px solid #93c5fd;
-  padding: 4px 10px;
-  border-radius: 6px;
-  font-size: 0.8rem;
-  font-weight: 500;
-  transition: all 0.2s;
+  cursor: pointer; background: var(--primary-light); color: var(--primary-color);
+  border: 1px solid var(--border-strong); padding: 4px 10px; border-radius: 6px;
+  font-size: 0.8rem; font-weight: 500; transition: all 0.2s;
 }
 
-.facility-tag:hover {
-  background: #fee2e2;
-  color: #991b1b;
-  border-color: #fca5a5;
-}
+.facility-tag:hover { background: var(--danger-light); color: #ffb4b0; border-color: rgba(229, 115, 115, 0.4); }
 
-.text-uppercase {
-  text-transform: uppercase;
-}
+.text-uppercase { text-transform: uppercase; }
+.full-width { flex: 1 1 100%; width: 100%; }
 
-.full-width {
-  flex: 1 1 100%;
-}
-
-/* ==========================================
-   21. ตารางแอดมิน (ปุ่ม Actions)
-   ========================================== */
-.table-actions {
-  display: flex;
-  gap: 8px;
-  white-space: nowrap;
-}
+.table-actions { display: flex; gap: 8px; white-space: nowrap; }
 
 .table-actions button {
-  min-height: 36px !important;
-  padding: 6px 14px !important;
-  font-size: 0.85rem !important;
-  border-radius: 8px !important;
-  box-shadow: none !important;
+  min-height: 36px !important; padding: 6px 14px !important; font-size: 0.85rem !important;
+  border-radius: 8px !important; box-shadow: none !important;
 }
 
-.table-actions .danger-button {
-  color: var(--danger-color);
-  background: transparent;
-  border: 1px solid var(--danger-color) !important;
-}
-.table-actions .danger-button:hover {
-  background: var(--danger-color);
-  color: white;
-}
+.table-actions .danger-button { color: var(--danger-color); background: transparent; border: 1px solid var(--danger-color) !important; }
+.table-actions .danger-button:hover { background: var(--danger-color); color: #1a1410; }
 
-.text-empty {
-  color: #94a3b8;
-  font-size: 0.85rem;
-  font-style: italic;
-}
+.text-empty { color: var(--text-muted); font-size: 0.85rem; font-style: italic; }
 
 .img-placeholder {
-  width: 50px;
-  height: 50px;
-  background: var(--bg-color);
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.7rem;
-  color: var(--text-muted);
+  width: 50px; height: 50px; background: rgba(212, 168, 90, 0.06); border-radius: 8px;
+  display: flex; align-items: center; justify-content: center; font-size: 0.7rem; color: var(--text-muted);
 }
 
-.table-title {
-  margin-bottom: 16px;
-  font-weight: 700;
-  color: var(--text-main);
-}
+.table-title { margin-bottom: 16px; font-weight: 700; color: var(--text-main); font-family: var(--font-display); }
 
-/* ==========================================
-   22. สีสถานะเพิ่มเติม (สำหรับ User)
-   ========================================== */
-.text-warning { color: var(--warning-color) !important; }
-/* ==========================================
-   23. Form Elements States
-   ========================================== */
-.select-disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  background-color: var(--bg-color);
-}
+.select-disabled { opacity: 0.5; cursor: not-allowed; background-color: rgba(212, 168, 90, 0.04); }
 
-.full-width {
-  width: 100%;
-}
-/* ==========================================
-   24. ปฏิทิน (Calendar)
-   ========================================== */
-.cal-toolbar {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 20px;
-}
-
-.cal-nav {
-  display: flex;
-  gap: 8px;
-}
+.cal-toolbar { display: flex; flex-direction: column; align-items: center; gap: 16px; margin-bottom: 20px; }
+.cal-nav { display: flex; gap: 8px; }
 
 .cal-btn-icon {
-  min-height: 40px !important;
-  padding: 0 16px !important;
-  font-size: 1rem;
-  background: white !important;
-  color: var(--text-main) !important;
-  border: 1px solid var(--border-color) !important;
-  box-shadow: none !important;
-  border-radius: 8px !important;
+  min-height: 40px !important; padding: 0 16px !important; font-size: 1rem;
+  background: var(--card-solid) !important; color: var(--text-main) !important;
+  border: 1px solid var(--border-color) !important; box-shadow: none !important; border-radius: 8px !important;
 }
-.cal-btn-icon:hover { background: var(--bg-color) !important; }
+.cal-btn-icon:hover { background: var(--primary-light) !important; }
 
 .cal-btn-today {
-  min-height: 40px !important;
-  padding: 0 20px !important;
-  font-size: 0.9rem;
-  background: var(--primary-light) !important;
-  color: var(--primary-color) !important;
-  border: 1px solid transparent !important;
-  box-shadow: none !important;
-  border-radius: 8px !important;
-  font-weight: 600;
+  min-height: 40px !important; padding: 0 20px !important; font-size: 0.9rem;
+  background: var(--primary-light) !important; color: var(--primary-color) !important;
+  border: 1px solid var(--border-strong) !important; box-shadow: none !important;
+  border-radius: 8px !important; font-weight: 700;
 }
 
-.cal-title {
-  margin: 0;
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--text-main);
-}
+.cal-title { margin: 0; font-size: 1.2rem; font-weight: 700; color: var(--text-main); font-family: var(--font-display); }
 
-.cal-tabs {
-  display: flex;
-  background: var(--bg-color);
-  border-radius: 10px;
-  padding: 4px;
-}
+.cal-tabs { display: flex; background: rgba(212, 168, 90, 0.05); border-radius: 10px; padding: 4px; }
 
 .cal-tabs button {
-  flex: 1;
-  min-height: 36px !important;
-  padding: 0 12px !important;
-  font-size: 0.85rem;
-  background: transparent !important;
-  color: var(--text-muted) !important;
-  box-shadow: none !important;
-  border-radius: 8px !important;
-  border: none !important;
-  font-weight: 500;
+  flex: 1; min-height: 36px !important; padding: 0 12px !important; font-size: 0.85rem;
+  background: transparent !important; color: var(--text-muted) !important; box-shadow: none !important;
+  border-radius: 8px !important; border: none !important; font-weight: 600;
 }
 
-.cal-tabs button.active {
-  background: white !important;
-  color: var(--text-main) !important;
-  box-shadow: var(--shadow-sm) !important;
-  font-weight: 600;
-}
+.cal-tabs button.active { background: var(--card-solid) !important; color: var(--primary-color) !important; box-shadow: var(--shadow-sm) !important; }
 
-/* Grid ปฏิทิน */
-.cal-weekdays {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 4px;
-  margin-bottom: 4px;
-}
-
-.cal-weekday {
-  text-align: center;
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: var(--text-muted);
-  padding: 8px 0;
-}
-
-.cal-grid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 4px;
-}
+.cal-weekdays { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-bottom: 4px; }
+.cal-weekday { text-align: center; font-size: 0.8rem; font-weight: 700; color: var(--text-muted); padding: 8px 0; }
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
 
 .cal-cell {
-  position: relative;
-  aspect-ratio: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  border-radius: 12px;
-  border: none;
-  background: transparent;
-  color: var(--text-main);
-  cursor: pointer;
-  transition: all 0.15s ease;
-  box-shadow: none !important;
-  padding: 4px;
+  position: relative; aspect-ratio: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; border-radius: 12px; border: none;
+  background: transparent; color: var(--text-main); cursor: pointer;
+  transition: all 0.15s ease; box-shadow: none !important; padding: 4px;
 }
 
-.cal-cell:not(.empty):hover {
-  background: var(--bg-color);
-}
-
-.cal-cell.is-today {
-  background: var(--primary-light);
-  font-weight: 700;
-}
-
-.cal-cell.is-selected {
-  background: var(--primary-color) !important;
-  color: white !important;
-}
-
-.cal-cell.empty {
-  cursor: default;
-}
-
-.cal-num {
-  font-size: 0.95rem;
-  line-height: 1;
-}
+.cal-cell:not(.empty):hover { background: rgba(212, 168, 90, 0.06); }
+.cal-cell.is-today { background: var(--primary-light); font-weight: 700; }
+.cal-cell.is-selected { background: var(--primary-color) !important; color: #1a1410 !important; }
+.cal-cell.empty { cursor: default; }
+.cal-num { font-size: 0.95rem; line-height: 1; }
 
 .cal-badge {
-  position: absolute;
-  top: 4px;
-  right: 4px;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: var(--primary-color);
-  color: white;
-  font-size: 0.6rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
+  position: absolute; top: 4px; right: 4px; width: 16px; height: 16px; border-radius: 50%;
+  background: var(--primary-color); color: #1a1410; font-size: 0.6rem;
+  display: flex; align-items: center; justify-content: center; font-weight: 700;
 }
 
-.cal-cell.is-selected .cal-badge {
-  background: rgba(255,255,255,0.3);
-}
+.cal-cell.is-selected .cal-badge { background: rgba(26, 20, 16, 0.3); }
 
-/* หน้ารายวัน */
-.cal-day-panel {
-  margin-top: 10px;
-}
+.cal-day-panel { margin-top: 10px; }
 
 .cal-day-header {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: var(--text-main);
-  margin: 0 0 20px 0;
-  padding-bottom: 12px;
-  border-bottom: 1px solid var(--border-color);
+  font-size: 1.1rem; font-weight: 700; color: var(--text-main); margin: 0 0 20px 0;
+  padding-bottom: 12px; border-bottom: 1px solid var(--border-color); font-family: var(--font-display);
 }
 
-.cal-empty-state {
-  text-align: center;
-  padding: 40px 20px;
-  color: var(--text-muted);
-}
-
-.cal-event-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
+.cal-empty-state { text-align: center; padding: 40px 20px; color: var(--text-muted); }
+.cal-event-list { display: flex; flex-direction: column; gap: 12px; }
 
 .cal-event-card {
-  display: flex;
-  gap: 16px;
-  padding: 16px;
-  background: white;
-  border-radius: var(--radius-sm);
-  box-shadow: var(--shadow-sm);
-  border-left: 5px solid var(--border-color);
-  align-items: flex-start;
-  transition: transform 0.2s;
+  display: flex; gap: 16px; padding: 16px; background: var(--card-solid);
+  border-radius: var(--radius-sm); box-shadow: var(--shadow-sm); border-left: 5px solid var(--border-color);
+  border-top: 1px solid var(--border-color); border-right: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);
+  align-items: flex-start; transition: transform 0.2s;
 }
 .cal-event-card:hover { transform: translateY(-2px); }
 
-/* เส้นขอบสีตามสถานะ */
 .cal-event-card.border-left-approved { border-left-color: var(--success-color); }
 .cal-event-card.border-left-pending { border-left-color: var(--warning-color); }
-.cal-event-card.border-left-cancelled { border-left-color: #94a3b8; }
+.cal-event-card.border-left-cancelled { border-left-color: var(--text-muted); }
 .cal-event-card.border-left-completed { border-left-color: var(--primary-color); }
 
 .event-time-block {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-  min-width: 60px;
-  color: var(--text-main);
-  font-size: 0.9rem;
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  min-width: 60px; color: var(--text-main); font-size: 0.9rem; font-family: var(--font-mono);
 }
-.event-time-block span { font-size: 0.75rem; color: var(--text-muted); }
+.event-time-block span { font-size: 0.72rem; color: var(--text-muted); font-family: var(--font-body); }
 
-.event-details {
-  flex: 1;
-}
-.event-details h4 { margin: 0 0 6px; font-size: 1rem; }
+.event-details { flex: 1; }
+.event-details h4 { margin: 0 0 6px; font-size: 1rem; font-family: var(--font-display); color: var(--text-main); }
 .event-details p { margin: 0 0 2px; font-size: 0.85rem; color: var(--text-muted); }
 
-.cal-event-card .status {
-  margin-left: auto;
-  flex-shrink: 0;
-}
+.cal-event-card .status { margin-left: auto; flex-shrink: 0; }
+.cal-actions { margin-top: 30px; text-align: center; }
 
-.cal-actions {
-  margin-top: 30px;
-  text-align: center;
-}
-
-/* Responsive สำหรับปฏิทินบนจอใหญ่ */
 @media (min-width: 640px) {
-  .cal-toolbar {
-    flex-direction: row;
-    justify-content: space-between;
-  }
+  .cal-toolbar { flex-direction: row; justify-content: space-between; }
   .cal-nav { order: 1; }
   .cal-title { order: 2; }
   .cal-tabs { order: 3; }
-  
   .cal-cell { aspect-ratio: auto; min-height: 60px; }
 }
+
+.report-actions { display: flex; gap: 12px; margin-bottom: 20px; }
+.report-actions button { flex: 1; }
+
+.table-count { margin-bottom: 18px; font-weight: 700; color: var(--primary-color); font-size: 0.95rem; }
+
+.booking-number { font-family: var(--font-mono); color: var(--primary-color); font-size: 0.88rem; font-weight: 700; }
+.booking-title { font-size: 0.9rem; font-weight: 600; margin-top: 2px; color: var(--text-main); }
+.booking-sub { font-size: 0.8rem; color: var(--text-muted); margin-top: 2px; }
+.booking-time-block { line-height: 1.5; color: var(--text-main); }
+.booking-time-block small { color: var(--text-muted); font-size: 0.8rem; }
+
+.back-button {
+  background: none; border: none; color: var(--text-muted); font-size: 14px; font-weight: 600;
+  cursor: pointer; padding: 0; margin-bottom: 10px; box-shadow: none; min-height: auto;
+}
+.back-button:hover { color: var(--primary-color); text-decoration: underline; box-shadow: none; }
+
+.qr-button { background: rgba(212, 168, 90, 0.06); color: var(--text-main); box-shadow: none; border: 1px solid var(--border-color); }
+.qr-button:hover { background: var(--primary-light); color: var(--primary-color); }
+
+.thai-datetime-picker { position: relative; width: 100%; color: var(--text-main); }
+
+.thai-datetime-trigger {
+  width: 100%; text-align: left; padding: 13px 16px; border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-sm); background: rgba(15, 34, 28, 0.6); color: var(--text-main);
+  cursor: pointer; font-size: 15px; font-weight: 500; min-height: auto; box-shadow: none;
+}
+.thai-datetime-trigger:hover { border-color: var(--primary-color); background: rgba(15, 34, 28, 0.9); }
+
+.thai-datetime-popover {
+  position: absolute; z-index: 50; top: calc(100% + 8px); left: 0; width: 300px; max-width: 90vw;
+  background: var(--card-solid); color: var(--text-main); border: 1px solid var(--border-strong);
+  border-radius: var(--radius); box-shadow: var(--shadow-lg); padding: 16px;
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+}
+
+.thai-calendar-header { display: flex; align-items: center; justify-content: space-between; font-weight: 700; color: var(--text-main); margin-bottom: 10px; font-family: var(--font-display); }
+.thai-calendar-header span { color: var(--text-main); }
+.thai-calendar-header button {
+  border: none; background: rgba(212, 168, 90, 0.08); color: var(--text-main); border-radius: 8px;
+  width: 30px; height: 30px; min-height: auto; cursor: pointer; font-size: 16px; padding: 0; box-shadow: none;
+}
+.thai-calendar-header button:hover { background: var(--primary-light); color: var(--primary-color); }
+
+.thai-calendar-weekdays { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 4px; }
+.thai-calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-bottom: 14px; }
+.thai-calendar-empty { display: block; }
+
+.thai-calendar-day {
+  border: none; background: rgba(212, 168, 90, 0.05); color: var(--text-main); border-radius: 8px;
+  padding: 8px 0; cursor: pointer; font-size: 13px; min-height: auto; box-shadow: none;
+}
+.thai-calendar-day:hover:not(.is-disabled) { background: var(--primary-light); color: var(--primary-color); }
+.thai-calendar-day.is-selected { background: var(--primary-color); color: #1a1410; font-weight: 700; }
+.thai-calendar-day.is-disabled { color: rgba(240, 233, 216, 0.25); cursor: not-allowed; background: transparent; }
+
+.thai-time-label { font-size: 13px; font-weight: 700; margin-bottom: 8px; color: var(--text-main); }
+.thai-time-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; max-height: 140px; overflow-y: auto; margin-bottom: 12px; }
+
+.thai-time-chip {
+  border: 1.5px solid var(--border-color); background: rgba(15, 34, 28, 0.6); color: var(--text-main);
+  border-radius: 8px; padding: 7px 0; font-size: 12px; font-weight: 500; cursor: pointer; min-height: auto; box-shadow: none;
+}
+.thai-time-chip:hover:not(:disabled) { border-color: var(--primary-color); color: var(--primary-color); }
+.thai-time-chip.is-selected { background: var(--primary-color); color: #1a1410; border-color: var(--primary-color); }
+.thai-time-chip:disabled { opacity: 0.35; cursor: not-allowed; color: var(--text-muted); }
+
+.thai-time-hint { font-size: 12px; color: var(--text-muted); margin: -6px 0 10px; }
+
+.thai-datetime-done {
+  width: 100%; padding: 9px 0; border: none; border-radius: var(--radius-sm);
+  background: linear-gradient(135deg, var(--primary-color) 0%, #b89045 100%); color: #1a1410;
+  cursor: pointer; font-size: 13px; font-weight: 700; min-height: auto; box-shadow: none;
+}
+.thai-datetime-done:hover { transform: none; box-shadow: none; }
+.thai-datetime-done:disabled { opacity: 0.5; cursor: not-allowed; }
 /* ==========================================
-   26. ตารางผู้ดูแลการจอง (Booking Admin)
+   27. Sidebar Layout (Persistent Navigation)
    ========================================== */
-.report-actions {
+.app-shell {
   display: flex;
-  gap: 12px;
-  margin-bottom: 20px;
+  min-height: 100vh;
 }
 
-.report-actions button {
+.app-main {
   flex: 1;
+  min-width: 0;
 }
 
-.table-count {
-  margin-bottom: 18px;
-  font-weight: 600;
-  color: var(--primary-color);
-  font-size: 0.95rem;
+.mobile-menu-btn {
+  display: none;
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 40;
+  width: 44px;
+  height: 44px;
+  min-height: 44px;
+  padding: 0;
+  border-radius: 10px;
+  background: var(--card-solid);
+  color: var(--text-main);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-md);
+  font-size: 18px;
 }
 
-/* จัดรูปแบบข้อมูลในตาราง */
-.booking-number {
-  font-family: 'Courier New', Courier, monospace;
-  color: var(--primary-color);
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 45;
+}
+
+.sidebar {
+  width: 260px;
+  flex-shrink: 0;
+  background: var(--card-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-right: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+}
+
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 20px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.sidebar-logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--primary-color) 0%, #b89045 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.sidebar-title {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-main);
+  line-height: 1.2;
+}
+
+.sidebar-subtitle {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+  margin-top: 2px;
+}
+
+.sidebar-nav {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.sidebar-section-label {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+  padding: 10px 12px 6px;
+}
+
+.sidebar-section-admin {
+  margin-top: 12px;
+}
+
+.sidebar-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 12px;
+  border-radius: 10px;
   font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-decoration: none;
+  position: relative;
+  transition: all 0.15s ease;
+}
+
+.sidebar-nav-item:hover {
+  background: rgba(212, 168, 90, 0.06);
+  color: var(--text-main);
+}
+
+.sidebar-nav-item.active {
+  background: linear-gradient(135deg, rgba(212, 168, 90, 0.16) 0%, rgba(212, 168, 90, 0.04) 100%);
+  color: var(--primary-color);
   font-weight: 700;
 }
 
-.booking-title {
-  font-size: 0.9rem;
+.sidebar-nav-item.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 60%;
+  background: var(--primary-color);
+  border-radius: 0 3px 3px 0;
+}
+
+.sidebar-nav-icon {
+  width: 20px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.sidebar-badge {
+  margin-left: auto;
+  background: var(--primary-color);
+  color: #1a1410;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 999px;
+}
+
+.sidebar-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px;
+  margin: 10px;
+  border-top: 1px solid var(--border-color);
+  padding-top: 16px;
+  cursor: pointer;
+  border-radius: 10px;
+  transition: background 0.15s;
+}
+
+.sidebar-user:hover { background: rgba(212, 168, 90, 0.05); }
+
+.sidebar-avatar, .sidebar-avatar-placeholder {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 2px solid var(--border-strong);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--primary-light);
+  color: var(--primary-color);
+  font-weight: 700;
+}
+
+.sidebar-user-info { flex: 1; min-width: 0; }
+
+.sidebar-user-name {
+  font-size: 0.85rem;
   font-weight: 600;
-  margin-top: 2px;
+  color: var(--text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.booking-sub {
-  font-size: 0.8rem;
+.sidebar-user-role {
+  font-size: 0.72rem;
   color: var(--text-muted);
-  margin-top: 2px;
 }
 
-.booking-time-block {
-  line-height: 1.5;
-}
-
-.booking-time-block small {
+.sidebar-logout {
+  min-height: auto;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border-radius: 8px;
+  background: transparent;
   color: var(--text-muted);
-  font-size: 0.8rem;
+  box-shadow: none;
+  flex-shrink: 0;
+  font-size: 14px;
+}
+
+.sidebar-logout:hover {
+  background: var(--danger-light);
+  color: var(--danger-color);
+  transform: none;
+  box-shadow: none;
+}
+
+@media (max-width: 1023px) {
+  .mobile-menu-btn { display: flex; align-items: center; justify-content: center; }
+  .sidebar-overlay.open,
+  .sidebar-overlay { display: block; }
+  .sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 50;
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+  }
+  .sidebar.is-open { transform: translateX(0); }
+  .app-main { padding-top: 64px; }
 }

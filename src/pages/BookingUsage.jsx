@@ -62,9 +62,10 @@ function BookingUsage() {
   // ✅ คำนวณเวลาที่ใช้งานจริง (เพิ่ม Math.max เผื่อเวลาติดลบ)
   const startTime = booking ? new Date(booking.start_time) : null
   const diffMs = startTime ? Math.max(0, currentTime - startTime) : 0
-  const diffMins = Math.floor(diffMs / 60000)
-  const hours = Math.floor(diffMins / 60)
-  const minutes = diffMins % 60
+  const diffSecondsTotal = Math.floor(diffMs / 1000)
+  const hours = Math.floor(diffSecondsTotal / 3600)
+  const minutes = Math.floor((diffSecondsTotal % 3600) / 60)
+  const seconds = diffSecondsTotal % 60
 
   if (loading) return <p style={{ padding: 30, textAlign: 'center' }}>กำลังโหลด...</p>
 
@@ -95,7 +96,7 @@ function BookingUsage() {
 
             <div style={{ textAlign: 'center', padding: '30px 0' }}>
               <h1 style={{ fontSize: '64px', margin: 0, color: '#15803d' }}>
-                {hours.toString().padStart(2, '0')}:{minutes.toString().padStart(2, '0')}
+                {hours.toString().padStart(2, '0')}:{minutes.toString().padStart(2, '0')}:{seconds.toString().padStart(2, '0')}
               </h1>
               <p style={{ margin: '5px 0 0', color: '#475569' }}>เวลาที่ผ่านไป</p>
               <p style={{ margin: 0, fontSize: '13px', color: '#94a3b8' }}>

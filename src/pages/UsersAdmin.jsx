@@ -94,7 +94,7 @@ function UsersAdmin() {
         )}
 
         {/* ✅ ใช้ Class แทน Inline style */}
-        <button className="secondary-button full-width" style={{ marginTop: 20 }} onClick={() => navigate('/dashboard')}>← กลับหน้าหลัก</button>
+        
       </section>
     </main>
   )
