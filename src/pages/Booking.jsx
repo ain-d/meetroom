@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import ThaiDateTimePicker from '../components/ThaiDateTimePicker'
+import RoomAvailabilityGrid from '../components/RoomAvailabilityGrid'
 
 // แปลสถานะ
 const getStatusLabel = (status) => {
@@ -72,17 +73,18 @@ function Booking() {
 
   const handleChange = (e) => setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }))
 
+  // ✅ ใช้ RPC get_room_availability แทนการ query ตาราง bookings ตรงๆ
+  //    เพราะ RLS ปัจจุบันให้ผู้ใช้ทั่วไปมองเห็นได้แค่การจองของ "ตัวเอง" เท่านั้น —
+  //    query แบบเดิมจะมองไม่เห็นการจองของคนอื่นเลย ทำให้เช็ค conflict หลุดได้
+  //    (ฟังก์ชันนี้ต้องรัน supabase_room_availability_function.sql ในโปรเจกต์ก่อนถึงจะใช้ได้)
   const checkConflict = async (roomId, startISO, endISO) => {
-    const { data, error } = await supabase
-      .from('bookings')
-      .select('id')
-      .eq('room_id', roomId)
-      .in('status', ['pending', 'approved'])
-      .lt('start_time', endISO)
-      .gt('end_time', startISO)
-      .limit(1)
+    const { data, error } = await supabase.rpc('get_room_availability', {
+      p_room_id: roomId,
+      p_range_start: startISO,
+      p_range_end: endISO,
+    })
     if (error) throw new Error(error.message)
-    return data?.length > 0
+    return (data || []).length > 0
   }
 
   const handleSubmit = async (e) => {
@@ -239,6 +241,15 @@ function Booking() {
         </div>
 
         {message.text && <div className={`message ${message.type}`}>{message.text}</div>}
+
+        <div className="form-section-label">🟢 ตารางความว่างของห้องนี้ — กดช่องเริ่มแล้วกดช่องสิ้นสุด เพื่อเติมเวลาให้อัตโนมัติ</div>
+        <RoomAvailabilityGrid
+          roomId={selectedRoom.id}
+          selectedStartValue={form.start_time}
+          selectedEndValue={form.end_time}
+          minDateTime={new Date(minDateTime)}
+          onRangeSelect={(startVal, endVal) => setForm((prev) => ({ ...prev, start_time: startVal, end_time: endVal }))}
+        />
 
         <form className="register-form" onSubmit={handleSubmit} noValidate>
           <label>

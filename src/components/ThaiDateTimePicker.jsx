@@ -46,12 +46,22 @@ function ThaiDateTimePicker({ value, onChange, minDate }) {
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
-  // ✅ sync กลับจาก parent เฉพาะตอนที่ parent เคลียร์ค่าเป็น '' (เช่นหลัง submit สำเร็จ)
+  // ✅ sync กลับจาก parent ทั้งตอนที่ parent เคลียร์ค่าเป็น '' (เช่นหลัง submit สำเร็จ)
+  //    และตอนที่ parent เซ็ตค่ามาจากที่อื่น (เช่น กดเลือกจากตารางเวลาว่างของห้อง)
+  //    ไม่ใช่แค่ตอนเปิดครั้งแรกเหมือนเดิม เพราะ initial ด้านบนคำนวณครั้งเดียวตอน mount เท่านั้น
   useEffect(() => {
     if (!value) {
       setPendingDay(null)
       setPendingTime(null)
+      return
     }
+    const parsed = parseValue(value)
+    if (!parsed) return
+    const newDay = startOfDay(parsed)
+    const newTime = `${pad(parsed.getHours())}:${pad(parsed.getMinutes())}`
+    setPendingDay((prevDay) => (isSameDay(prevDay, newDay) ? prevDay : newDay))
+    setPendingTime((prevTime) => (prevTime === newTime ? prevTime : newTime))
+    setViewMonth(newDay)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value])
 

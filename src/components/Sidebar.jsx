@@ -21,7 +21,7 @@ const ADMIN_NAV = [
   { to: '/admin/rooms', icon: '🏬', label: 'จัดการห้อง' },
   { to: '/admin/users', icon: '👥', label: 'จัดการผู้ใช้งาน' },
   { to: '/admin/issues', icon: '🛠️', label: 'จัดการปัญหาห้อง' },
-  { to: '/reports', icon: '📊', label: 'สถิติและรายงาน' },
+  // ✅ "สถิติและรายงาน" ถูกรวมเข้าไปในเมนู "แดชบอร์ด" ด้านบนแล้ว ไม่มีเมนูนี้แยกอีกต่อไป
   { to: '/admin/qrcode', icon: '🔳', label: 'QR ระบบ' },
   { to: '/admin/contact', icon: '☎️', label: 'ตั้งค่าข้อมูลติดต่อ' },
 ]

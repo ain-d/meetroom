@@ -1,0 +1,162 @@
+/* ==========================================
+   ตารางความว่างของห้อง (RoomAvailabilityGrid)
+   ใช้โทนสีเดียวกับธีมหลัก (Dark Forest & Gold) ใน App.css
+   ========================================== */
+
+.form-section-label {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--text-main);
+  margin: 4px 0 2px;
+}
+
+.room-availability {
+  margin: 14px 0 20px;
+  padding: 14px;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-sm);
+}
+
+.room-availability-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.avail-nav-btn {
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-main);
+  cursor: pointer;
+  font-size: 14px;
+}
+.avail-nav-btn:hover:not(:disabled) { border-color: var(--primary-color); color: var(--primary-color); }
+.avail-nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+.avail-day-label {
+  flex: 1;
+  text-align: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--text-main);
+  font-size: 0.95rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.avail-today-btn {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 0.75rem;
+  color: var(--primary-color);
+  background: var(--primary-light);
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  padding: 2px 10px;
+  cursor: pointer;
+}
+.avail-today-btn:hover { background: var(--primary-soft); }
+
+.avail-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+@media (min-width: 480px) {
+  .avail-grid { grid-template-columns: repeat(6, 1fr); }
+}
+
+.avail-slot {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  padding: 7px 0;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  color: var(--text-main);
+  transition: transform 0.1s ease;
+}
+.avail-slot:active:not(:disabled) { transform: scale(0.95); }
+
+.avail-slot.avail-green {
+  background: var(--success-light);
+  color: #a8e8c8;
+  border-color: rgba(111, 200, 154, 0.3);
+}
+.avail-slot.avail-green:hover { border-color: var(--success-color); }
+
+.avail-slot.avail-orange {
+  background: var(--warning-light);
+  color: #f0d189;
+  border-color: rgba(232, 192, 104, 0.3);
+  cursor: pointer;
+}
+
+.avail-slot.avail-red {
+  background: var(--danger-light);
+  color: #ffb4b0;
+  border-color: rgba(229, 115, 115, 0.3);
+  cursor: pointer;
+}
+
+.avail-slot.avail-past {
+  background: rgba(138, 150, 144, 0.1);
+  color: var(--text-muted);
+  border-color: rgba(138, 150, 144, 0.2);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.avail-slot.is-pending-start {
+  border-color: var(--primary-color) !important;
+  box-shadow: 0 0 0 2px var(--primary-soft);
+  font-weight: 700;
+}
+
+.avail-slot.is-in-range {
+  background: var(--primary-color) !important;
+  color: #1a1410 !important;
+  border-color: var(--primary-color) !important;
+  font-weight: 700;
+}
+
+.avail-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+.avail-legend span { display: inline-flex; align-items: center; gap: 5px; }
+
+.avail-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.avail-dot.avail-green { background: var(--success-color); }
+.avail-dot.avail-orange { background: var(--warning-color); }
+.avail-dot.avail-red { background: var(--danger-color); }
+.avail-dot.avail-past { background: var(--text-muted); }
+
+.avail-hint {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin: 4px 0 0;
+}
+.avail-hint.avail-error { color: var(--danger-color); }

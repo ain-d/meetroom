@@ -13,7 +13,6 @@ import AdminSetup from './pages/AdminSetup'
 import Calendar from './pages/Calendar'
 import Profile from './pages/Profile'
 import UsersAdmin from './pages/UsersAdmin'
-import Reports from './pages/Reports'
 import BookingUsage from './pages/BookingUsage'
 import Layout from './components/Layout'
 
@@ -93,11 +92,11 @@ function RoleProtectedRoute({ children, requireAdmin = false }) {
 }
 
 function App() {
-  const { notifications, dismissNotification } = useBookingNotifications()
+  const { notifications, dismissNotification, soundEnabled, toggleSound } = useBookingNotifications()
 
   return (
     <>
-      <Notifications notifications={notifications} onDismiss={dismissNotification} />
+      <Notifications notifications={notifications} onDismiss={dismissNotification} soundEnabled={soundEnabled} onToggleSound={toggleSound} />
 
       <Routes>
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
@@ -105,30 +104,32 @@ function App() {
         <Route path="/register" element={<Register />} />
 
         <Route path="/dashboard" element={<ProtectedRoute><Layout><Dashboard /></Layout></ProtectedRoute>} />
-<Route path="/booking" element={<ProtectedRoute><Layout><Booking /></Layout></ProtectedRoute>} />
-<Route path="/profile" element={<ProtectedRoute><Layout><Profile /></Layout></ProtectedRoute>} />
-<Route path="/calendar" element={<ProtectedRoute><Layout><Calendar /></Layout></ProtectedRoute>} />
-<Route path="/booking-history" element={<ProtectedRoute><Layout><BookingHistory /></Layout></ProtectedRoute>} />
-<Route path="/booking/:id/usage" element={<ProtectedRoute><Layout><BookingUsage /></Layout></ProtectedRoute>} />
+        <Route path="/booking" element={<ProtectedRoute><Layout><Booking /></Layout></ProtectedRoute>} />
+        <Route path="/profile" element={<ProtectedRoute><Layout><Profile /></Layout></ProtectedRoute>} />
+        <Route path="/calendar" element={<ProtectedRoute><Layout><Calendar /></Layout></ProtectedRoute>} />
+        <Route path="/booking-history" element={<ProtectedRoute><Layout><BookingHistory /></Layout></ProtectedRoute>} />
+        <Route path="/booking/:id/usage" element={<ProtectedRoute><Layout><BookingUsage /></Layout></ProtectedRoute>} />
 
-{/* ✅ ติดต่อเรา: ทั้งผู้ใช้และแอดมินเข้าได้ (แค่ล็อกอิน ไม่ต้องเป็นแอดมิน) */}
-<Route path="/contact" element={<ProtectedRoute><Layout><Contact /></Layout></ProtectedRoute>} />
-{/* ✅ แจ้งปัญหาห้อง: สำหรับผู้ใช้ทั่วไป (แอดมินเข้าได้เช่นกันเพราะไม่ได้บังคับ role) */}
-<Route path="/report-issue" element={<ProtectedRoute><Layout><ReportIssue /></Layout></ProtectedRoute>} />
+        {/* ✅ ติดต่อเรา: ทั้งผู้ใช้และแอดมินเข้าได้ (แค่ล็อกอิน ไม่ต้องเป็นแอดมิน) */}
+        <Route path="/contact" element={<ProtectedRoute><Layout><Contact /></Layout></ProtectedRoute>} />
+        {/* ✅ แจ้งปัญหาห้อง: สำหรับผู้ใช้ทั่วไป (แอดมินเข้าได้เช่นกันเพราะไม่ได้บังคับ role) */}
+        <Route path="/report-issue" element={<ProtectedRoute><Layout><ReportIssue /></Layout></ProtectedRoute>} />
 
-<Route path="/admin/rooms" element={<RoleProtectedRoute requireAdmin={true}><Layout><RoomsAdmin /></Layout></RoleProtectedRoute>} />
-<Route path="/admin/bookings" element={<RoleProtectedRoute requireAdmin={true}><Layout><BookingAdmin /></Layout></RoleProtectedRoute>} />
-<Route path="/admin/users" element={<RoleProtectedRoute requireAdmin={true}><Layout><UsersAdmin /></Layout></RoleProtectedRoute>} />
-<Route path="/reports" element={<RoleProtectedRoute requireAdmin={true}><Layout><Reports /></Layout></RoleProtectedRoute>} />
-<Route path="/admin/qrcode" element={<RoleProtectedRoute requireAdmin={true}><Layout><AppQRCode /></Layout></RoleProtectedRoute>} />
-{/* ✅ จัดการปัญหาห้อง (เฉพาะแอดมิน) */}
-<Route path="/admin/issues" element={<RoleProtectedRoute requireAdmin={true}><Layout><IssuesAdmin /></Layout></RoleProtectedRoute>} />
-{/* ✅ ตั้งค่าข้อมูลติดต่อ (เฉพาะแอดมิน) */}
-<Route path="/admin/contact" element={<RoleProtectedRoute requireAdmin={true}><Layout><ContactAdmin /></Layout></RoleProtectedRoute>} />
+        <Route path="/admin/rooms" element={<RoleProtectedRoute requireAdmin={true}><Layout><RoomsAdmin /></Layout></RoleProtectedRoute>} />
+        <Route path="/admin/bookings" element={<RoleProtectedRoute requireAdmin={true}><Layout><BookingAdmin /></Layout></RoleProtectedRoute>} />
+        <Route path="/admin/users" element={<RoleProtectedRoute requireAdmin={true}><Layout><UsersAdmin /></Layout></RoleProtectedRoute>} />
+        {/* ✅ /reports ถูกรวมเข้าไปในหน้า /dashboard (AdminDashboard) แล้ว ไม่มีหน้านี้แยกอีกต่อไป */}
+        <Route path="/admin/qrcode" element={<RoleProtectedRoute requireAdmin={true}><Layout><AppQRCode /></Layout></RoleProtectedRoute>} />
+        {/* ✅ จัดการปัญหาห้อง (เฉพาะแอดมิน) */}
+        <Route path="/admin/issues" element={<RoleProtectedRoute requireAdmin={true}><Layout><IssuesAdmin /></Layout></RoleProtectedRoute>} />
+        {/* ✅ ตั้งค่าข้อมูลติดต่อ (เฉพาะแอดมิน) */}
+        <Route path="/admin/contact" element={<RoleProtectedRoute requireAdmin={true}><Layout><ContactAdmin /></Layout></RoleProtectedRoute>} />
 
-<Route path="/kiosk/:roomId" element={<ProtectedRoute><RoomKiosk /></ProtectedRoute>} />
+        <Route path="/kiosk/:roomId" element={<ProtectedRoute><RoomKiosk /></ProtectedRoute>} />
 
-<Route path="/admin/setup" element={<RoleProtectedRoute requireAdmin={true}><Layout><AdminSetup /></Layout></RoleProtectedRoute>} />
+        <Route path="/admin/setup" element={<RoleProtectedRoute requireAdmin={true}><Layout><AdminSetup /></Layout></RoleProtectedRoute>} />
+
+        <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
     </>
   )

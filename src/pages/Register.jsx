@@ -147,20 +147,30 @@ function Register() {
     }
 
     let avatarUrl = null
+    let avatarWarning = ''
 
     if (avatarFile && data.user) {
-      const fileName = `${data.user.id}/${Date.now()}-${avatarFile.name.replace(/\s+/g, '-')}`
-      const { error: uploadError } = await supabase.storage
-        .from('avatars')
-        .upload(fileName, avatarFile, { upsert: true, contentType: avatarFile.type })
+      // ✅ ถ้ายังไม่มี session (ต้องยืนยันอีเมลก่อน) จะยังอัปโหลดรูปไม่ได้ เพราะ
+      //    สิทธิ์ของ storage ต้องการให้ล็อกอินอยู่จริงๆ ก่อน — ไม่งั้นจะเงียบๆ ล้มเหลว
+      //    โดยผู้ใช้ไม่รู้ตัวว่ารูปที่เลือกไว้หายไปไหน
+      if (!data.session) {
+        avatarWarning = ' (⚠️ รูปโปรไฟล์ที่เลือกไว้ยังไม่ถูกอัปโหลด กรุณายืนยันอีเมล เข้าสู่ระบบ แล้วอัปโหลดรูปอีกครั้งที่หน้าโปรไฟล์)'
+      } else {
+        const fileName = `${data.user.id}/${Date.now()}-${avatarFile.name.replace(/\s+/g, '-')}`
+        const { error: uploadError } = await supabase.storage
+          .from('avatars')
+          .upload(fileName, avatarFile, { upsert: true, contentType: avatarFile.type })
 
-      if (!uploadError) {
-        const { data: publicData } = supabase.storage.from('avatars').getPublicUrl(fileName)
-        avatarUrl = publicData.publicUrl
+        if (uploadError) {
+          avatarWarning = ` (⚠️ อัปโหลดรูปโปรไฟล์ไม่สำเร็จ: ${uploadError.message} — เข้าไปอัปโหลดใหม่ได้ที่หน้าโปรไฟล์)`
+        } else {
+          const { data: publicData } = supabase.storage.from('avatars').getPublicUrl(fileName)
+          avatarUrl = publicData.publicUrl
 
-        await supabase.auth.updateUser({
-          data: { full_name: form.fullName, avatar_url: avatarUrl },
-        })
+          await supabase.auth.updateUser({
+            data: { full_name: form.fullName, avatar_url: avatarUrl },
+          })
+        }
       }
     }
 
@@ -170,9 +180,9 @@ function Register() {
     setLoading(false)
 
     if (data.user && !data.session) {
-      setMessage({ type: 'success', text: 'สร้างบัญชีสำเร็จแล้ว กรุณายืนยันอีเมลก่อนเข้าใช้งาน' })
+      setMessage({ type: 'success', text: `สร้างบัญชีสำเร็จแล้ว กรุณายืนยันอีเมลก่อนเข้าใช้งาน${avatarWarning}` })
     } else if (data.session) {
-      setMessage({ type: 'success', text: avatarUrl ? 'สร้างบัญชีและอัปโหลดรูปโปรไฟล์สำเร็จแล้ว' : 'สร้างบัญชีสำเร็จแล้ว' })
+      setMessage({ type: 'success', text: (avatarUrl ? 'สร้างบัญชีและอัปโหลดรูปโปรไฟล์สำเร็จแล้ว' : 'สร้างบัญชีสำเร็จแล้ว') + avatarWarning })
     }
   }
 

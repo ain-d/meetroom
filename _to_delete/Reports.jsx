@@ -17,6 +17,7 @@ function Reports() {
     totalUsers: 0,
   })
   const [loading, setLoading] = useState(true)
+  const [statsError, setStatsError] = useState('')
 
   useEffect(() => {
     const loadStats = async () => {
@@ -42,6 +43,17 @@ function Reports() {
         supabase.from('rooms').select('*', { count: 'exact', head: true }),
         supabase.from('users').select('*', { count: 'exact', head: true }),
       ])
+
+      // ✅ ถ้าตัวไหนโหลดไม่สำเร็จ อย่าปล่อยให้ตัวเลขกลายเป็น 0 แบบเงียบๆ
+      //    เพราะจะดูเหมือนไม่มีอะไรค้าง ทั้งที่จริงแค่โหลดพัง
+      const responses = [pendingRes, approvedRes, cancelledRes, rejectedRes, completedRes, noShowRes, checkedInRes, roomsRes, usersRes]
+      const failed = responses.filter((res) => res.error)
+      if (failed.length > 0) {
+        console.error('โหลดสถิติรายงานไม่สำเร็จบางส่วน:', failed.map((f) => f.error?.message))
+        setStatsError('โหลดสถิติบางส่วนไม่สำเร็จ ตัวเลขที่เห็นด้านล่างอาจไม่ครบถ้วน ลองรีเฟรชหน้าอีกครั้ง')
+      } else {
+        setStatsError('')
+      }
 
       const pending = pendingRes.count || 0
       const approved = approvedRes.count || 0
@@ -101,6 +113,8 @@ function Reports() {
           <h1>📊 รายงานสรุป</h1>
           <p>ข้อมูลสถิติทั้งหมดของระบบจองห้องประชุม</p>
         </div>
+
+        {statsError && <div className="message error">{statsError}</div>}
 
         {/* ===== Hero: ยอดรวมการจองทั้งหมด ===== */}
         <div className="rpt-hero">

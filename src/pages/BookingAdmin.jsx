@@ -13,13 +13,26 @@ function BookingAdmin() {
   const [updatingId, setUpdatingId] = useState(null)
   const mountedRef = useRef(true)
 
+  // ✅ เรียงรายการ 2 แบบ ตามที่ตกลงกันไว้:
+  //    - รายการที่ "รออนุมัติ" อยู่ ให้ขึ้นก่อนเสมอ เรียงจากจองล่าสุดไปเก่าสุด (created_at)
+  //    - รายการที่ "ตัดสินใจแล้ว" (อนุมัติ/ปฏิเสธ/ยกเลิก) ให้ไปเรียงตามวันที่จะประชุมแทน (start_time)
+  const sortBookings = (list) => {
+    return [...list].sort((a, b) => {
+      const aPending = a.status === 'pending'
+      const bPending = b.status === 'pending'
+      if (aPending && bPending) return new Date(b.created_at) - new Date(a.created_at)
+      if (!aPending && !bPending) return new Date(a.start_time) - new Date(b.start_time)
+      return aPending ? -1 : 1
+    })
+  }
+
   const fetchBookings = useCallback(async () => {
     setLoading(true)
     const { data, error } = await supabase.from('bookings').select(`
-      id, booking_number, title, room_id, user_id, start_time, end_time, purpose, status, approved_by, approved_at,
+      id, booking_number, title, room_id, user_id, start_time, end_time, purpose, status, approved_by, approved_at, created_at,
       rooms(name, image_url),
       users!bookings_user_id_fkey(full_name)
-    `).order('start_time', { ascending: true })
+    `)
 
     if (!mountedRef.current) return
 
@@ -46,7 +59,8 @@ function BookingAdmin() {
     }
 
     if (!mountedRef.current) return
-    setBookings((data || []).map(item => ({ ...item, approved_by_name: approverMap.get(item.approved_by) || null })))
+    const withApprovers = (data || []).map(item => ({ ...item, approved_by_name: approverMap.get(item.approved_by) || null }))
+    setBookings(sortBookings(withApprovers))
     setLoading(false)
   }, [])
 
