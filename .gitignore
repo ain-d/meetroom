@@ -6,6 +6,12 @@ dist
 dist-ssr
 *.local
 
+# ✅ ห้าม commit ไฟล์ env จริงเด็ดขาด (มี service role key + รหัสลับ) — เดิมไม่มีบรรทัดนี้
+# ทำให้ .env หลุดขึ้น GitHub แบบ public มาตั้งแต่ commit แรก ต้องเปลี่ยนคีย์/รหัสทั้งหมดด้วย
+.env
+.env.*
+!.env.example
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

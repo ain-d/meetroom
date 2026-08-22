@@ -13,6 +13,7 @@
   "dependencies": {
     "@supabase/supabase-js": "^2.110.0",
     "express": "^5.2.1",
+    "express-rate-limit": "^8.6.2",
     "qrcode.react": "^4.2.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",

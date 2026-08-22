@@ -20,7 +20,7 @@ function BookingHistory() {
 
       const { data, error } = await supabase
         .from('bookings')
-        .select('id, booking_number, title, room_id, start_time, end_time, purpose, status, approved_at, rooms(name)')
+        .select('id, booking_number, title, room_id, start_time, end_time, purpose, status, approved_at, rejection_reason, rooms(name)')
         .eq('user_id', user.id)
         .order('start_time', { ascending: false })
 
@@ -188,7 +188,12 @@ function BookingHistory() {
                         {formatDateTime(b.start_time)}<br/>
                         <small>ถึง {formatDateTime(b.end_time)}</small>
                       </td>
-                      <td><span className={`status ${b.status}`}>{renderStatus(b.status)}</span></td>
+                      <td>
+                        <span className={`status ${b.status}`}>{renderStatus(b.status)}</span>
+                        {b.status === 'rejected' && b.rejection_reason && (
+                          <div style={{ marginTop: 4, fontSize: 12, color: '#94a3b8', maxWidth: 220 }}>เหตุผล: {b.rejection_reason}</div>
+                        )}
+                      </td>
                       <td>{getActionButtons(b)}</td>
                     </tr>
                   ))

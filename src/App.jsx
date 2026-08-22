@@ -9,7 +9,6 @@ import RoomsAdmin from './pages/RoomsAdmin'
 import Booking from './pages/Booking'
 import BookingAdmin from './pages/BookingAdmin'
 import BookingHistory from './pages/BookingHistory'
-import AdminSetup from './pages/AdminSetup'
 import Calendar from './pages/Calendar'
 import Profile from './pages/Profile'
 import UsersAdmin from './pages/UsersAdmin'
@@ -27,6 +26,7 @@ import ContactAdmin from './pages/ContactAdmin'
 
 import Notifications from './components/Notifications'
 import useBookingNotifications from './hooks/useBookingNotifications'
+import SessionGuard from './components/SessionGuard'
 
 import './App.css'
 
@@ -96,6 +96,8 @@ function App() {
 
   return (
     <>
+      {/* ✅ เฝ้าสถานะ session ทั้งระบบ: เด้ง login ถ้า session หมดอายุ + auto logout เมื่อไม่มีการใช้งานนาน */}
+      <SessionGuard />
       <Notifications notifications={notifications} onDismiss={dismissNotification} soundEnabled={soundEnabled} onToggleSound={toggleSound} />
 
       <Routes>
@@ -127,7 +129,8 @@ function App() {
 
         <Route path="/kiosk/:roomId" element={<ProtectedRoute><RoomKiosk /></ProtectedRoute>} />
 
-        <Route path="/admin/setup" element={<RoleProtectedRoute requireAdmin={true}><Layout><AdminSetup /></Layout></RoleProtectedRoute>} />
+        {/* ✅ /admin/setup ถูกลบออกแล้ว (ใช้งานจริงไม่ได้เพราะ server.js ไม่ได้ deploy บน Vercel)
+            ต่อไปนี้ตั้ง admin คนใหม่ผ่าน Supabase Dashboard -> Table Editor -> users -> แก้ role เอง */}
 
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>

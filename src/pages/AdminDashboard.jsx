@@ -35,7 +35,7 @@ function AdminDashboard({ profile }) {
         roomsRes, usersRes, todayRes,
         pendingRes, approvedRes, cancelledRes, rejectedRes, completedRes, noShowRes, checkedInRes,
       ] = await Promise.all([
-        supabase.from('rooms').select('*', { count: 'exact', head: true }),
+        supabase.from('rooms').select('*', { count: 'exact', head: true }).eq('is_active', true),
         supabase.from('users').select('*', { count: 'exact', head: true }),
         supabase.from('bookings').select('*', { count: 'exact', head: true }).gte('start_time', `${todayStr}T00:00:00`).lte('start_time', `${todayStr}T23:59:59`),
         supabase.from('bookings').select('*', { count: 'exact', head: true }).eq('status', 'pending'),

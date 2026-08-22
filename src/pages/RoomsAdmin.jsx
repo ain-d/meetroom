@@ -9,6 +9,10 @@ const STATUS_OPTIONS = [
   { value: 'out_of_service', label: 'ไม่ให้บริการ' },
 ]
 
+// ✅ จำกัดชนิดและขนาดไฟล์รูปห้อง (เดิมมีแค่ accept="image/*" ที่ฝั่ง UI ซึ่งข้ามได้ง่าย)
+const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp']
+const MAX_IMAGE_SIZE = 5 * 1024 * 1024 // 5MB
+
 function RoomsAdmin() {
   const navigate = useNavigate()
   const [rooms, setRooms] = useState([])
@@ -51,6 +55,24 @@ function RoomsAdmin() {
   }, [navigate])
 
   const handleChange = (e) => setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }))
+  const handleImageChange = (e) => {
+    const file = e.target.files?.[0]
+    if (!file) { setImageFile(null); return }
+    if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+      setMessage({ type: 'error', text: 'รองรับเฉพาะไฟล์รูปภาพ JPG, PNG หรือ WEBP เท่านั้น' })
+      e.target.value = ''
+      setImageFile(null)
+      return
+    }
+    if (file.size > MAX_IMAGE_SIZE) {
+      setMessage({ type: 'error', text: 'ขนาดไฟล์รูปภาพต้องไม่เกิน 5MB' })
+      e.target.value = ''
+      setImageFile(null)
+      return
+    }
+    setMessage({ type: '', text: '' })
+    setImageFile(file)
+  }
   const handleAddFacility = () => { if (!facilityInput.trim()) return; if (facilities.includes(facilityInput.trim())) return; setFacilities([...facilities, facilityInput.trim()]); setFacilityInput(''); setMessage({ type: '', text: '' }) }
   const handleRemoveFacility = (indexToRemove) => setFacilities(facilities.filter((_, index) => index !== indexToRemove))
 
@@ -152,7 +174,7 @@ function RoomsAdmin() {
             <input type="number" name="capacity" value={form.capacity} onChange={handleChange} placeholder="เช่น 10" min="1" />
           </label>
           <label><span>สถานะ</span><select name="status" value={form.status} onChange={handleChange}><option value="">เลือกสถานะ</option>{STATUS_OPTIONS.map((opt) => <option key={opt.value} value={opt.value}>{opt.label}</option>)}</select></label>
-          <label><span>รูปห้อง (ถ้ามี)</span><input type="file" accept="image/*" onChange={(e) => setImageFile(e.target.files[0])} /></label>
+          <label><span>รูปห้อง (ถ้ามี)</span><input type="file" accept="image/*" onChange={handleImageChange} /></label>
           <label className="full-width"><span>อุปกรณ์ภายในห้อง</span><div className="facility-input-group"><input type="text" value={facilityInput} onChange={(e) => setFacilityInput(e.target.value)} placeholder="เช่น Projector, Whiteboard" onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddFacility())} /><button type="button" className="btn-add-facility" onClick={handleAddFacility}>+</button></div>{facilities.length > 0 && (<div className="facility-tag-list">{facilities.map((fac, index) => (<span key={index} className="facility-tag" onClick={() => handleRemoveFacility(index)}>{fac} ×</span>))}</div>)}</label>
           <div className="form-actions"><button type="submit" disabled={loading}>{loading ? 'กำลังบันทึก...' : editingRoom ? 'อัปเดตห้อง' : 'สร้างห้อง'}</button>{editingRoom && <button type="button" className="secondary-button" onClick={handleCancelEdit}>ยกเลิก</button>}</div>
         </form>

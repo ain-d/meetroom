@@ -1,5 +1,9 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
+import useSubmitCooldown from '../hooks/useSubmitCooldown'
+
+// ✅ กันแจ้งปัญหาถี่ๆ (spam form)
+const REPORT_COOLDOWN_MS = 8000
 
 const ISSUE_TYPES = [
   'ไฟฟ้า / ปลั๊กไฟ',
@@ -18,13 +22,14 @@ function ReportIssue() {
   const [loading, setLoading] = useState(false)
   const [loadingRooms, setLoadingRooms] = useState(true)
   const [message, setMessage] = useState({ type: '', text: '' })
+  const checkCooldown = useSubmitCooldown(REPORT_COOLDOWN_MS)
 
   // ✅ โหลดรายชื่อห้องทั้งหมด + เบอร์โทรด่วน (แบบเรียลไทม์ ถ้าแอดมินแก้เบอร์ หน้านี้จะอัปเดตทันที)
   useEffect(() => {
     let mounted = true
 
     const loadRooms = async () => {
-      const { data } = await supabase.from('rooms').select('id, name').order('name')
+      const { data } = await supabase.from('rooms').select('id, name').eq('is_active', true).order('name')
       if (mounted) {
         setRooms(data || [])
         setLoadingRooms(false)
@@ -69,6 +74,12 @@ function ReportIssue() {
   const handleSubmit = async (event) => {
     event.preventDefault()
     setMessage({ type: '', text: '' })
+
+    const cooldown = checkCooldown()
+    if (!cooldown.ok) {
+      setMessage({ type: 'error', text: cooldown.message })
+      return
+    }
 
     if (!form.room_id) {
       setMessage({ type: 'error', text: 'กรุณาเลือกห้องที่มีปัญหา' })

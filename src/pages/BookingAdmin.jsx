@@ -11,6 +11,8 @@ function BookingAdmin() {
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
   const [updatingId, setUpdatingId] = useState(null)
+  const [rejectingId, setRejectingId] = useState(null) // ✅ id ของรายการที่กำลังกรอกเหตุผลปฏิเสธอยู่
+  const [rejectionReason, setRejectionReason] = useState('')
   const mountedRef = useRef(true)
 
   // ✅ เรียงรายการ 2 แบบ ตามที่ตกลงกันไว้:
@@ -29,7 +31,7 @@ function BookingAdmin() {
   const fetchBookings = useCallback(async () => {
     setLoading(true)
     const { data, error } = await supabase.from('bookings').select(`
-      id, booking_number, title, room_id, user_id, start_time, end_time, purpose, status, approved_by, approved_at, created_at,
+      id, booking_number, title, room_id, user_id, start_time, end_time, purpose, status, approved_by, approved_at, created_at, rejection_reason,
       rooms(name, image_url),
       users!bookings_user_id_fkey(full_name)
     `)
@@ -86,12 +88,8 @@ function BookingAdmin() {
     }
   }, [navigate, fetchBookings])
 
-  const updateBookingStatus = async (bookingId, status) => {
+  const updateBookingStatus = async (bookingId, status, reason = '') => {
     setUpdatingId(bookingId)
-    if (status === 'rejected' && !window.confirm('ยืนยันการปฏิเสธการจอง?')) {
-      setUpdatingId(null)
-      return
-    }
 
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) { navigate('/login'); return }
@@ -101,22 +99,17 @@ function BookingAdmin() {
       payload.approved_by = user.id
       payload.approved_at = new Date().toISOString()
     } else if (status === 'rejected') {
-      // ปฏิเสธโดย Admin: ล้าง approved_by/approved_at
+      // ปฏิเสธโดย Admin: ล้าง approved_by/approved_at และบันทึกเหตุผลที่ปฏิเสธ
       payload.approved_by = null
       payload.approved_at = null
+      payload.rejection_reason = reason
     }
-
-    console.log('🔍 กำลังส่ง Payload:', payload)
-    console.log('🔍 Booking ID:', bookingId)
 
     const { data, error } = await supabase
       .from('bookings')
       .update(payload)
       .eq('id', bookingId)
       .select()
-
-    console.log('🔍 ผลลัพธ์ที่ได้กลับมา (data):', data)
-    console.log('🔍 Error ที่ได้กลับมา:', error)
 
     if (error) {
       setMessage({ type: 'error', text: `เกิดข้อผิดพลาด: ${error.message}` })
@@ -125,7 +118,6 @@ function BookingAdmin() {
     }
 
     if (!data || data.length === 0) {
-      console.warn('⚠️ ไม่มีแถวไหนถูกอัปเดต — RLS อาจบล็อก หรือหา id ไม่เจอ')
       setMessage({
         type: 'error',
         text: 'อัปเดตไม่สำเร็จ: ไม่พบรายการ หรือคุณไม่มีสิทธิ์แก้ไขรายการนี้',
@@ -135,8 +127,30 @@ function BookingAdmin() {
     }
 
     setMessage({ type: 'success', text: status === 'approved' ? 'อนุมัติเรียบร้อย' : 'ปฏิเสธเรียบร้อย' })
+    setRejectingId(null)
+    setRejectionReason('')
     await fetchBookings()
     setUpdatingId(null)
+  }
+
+  // ✅ เปิดฟอร์มกรอกเหตุผลปฏิเสธ (แทนที่ window.confirm เดิม — ต้องกรอกเหตุผลจริงถึงจะปฏิเสธได้)
+  const handleStartReject = (bookingId) => {
+    setRejectingId(bookingId)
+    setRejectionReason('')
+    setMessage({ type: '', text: '' })
+  }
+
+  const handleCancelReject = () => {
+    setRejectingId(null)
+    setRejectionReason('')
+  }
+
+  const handleConfirmReject = (bookingId) => {
+    if (!rejectionReason.trim()) {
+      setMessage({ type: 'error', text: 'กรุณากรอกเหตุผลที่ปฏิเสธการจอง' })
+      return
+    }
+    updateBookingStatus(bookingId, 'rejected', rejectionReason.trim())
   }
 
   const formatDateTime = (date) => new Date(date).toLocaleString('th-TH', { dateStyle: 'medium', timeStyle: 'short' })
@@ -219,15 +233,38 @@ function BookingAdmin() {
                       <small>ถึง {formatDateTime(b.end_time)}</small>
                     </div>
                   </td>
-                  <td><span className={`status ${b.status}`}>{statusLabel(b.status)}</span></td>
+                  <td>
+                    <span className={`status ${b.status}`}>{statusLabel(b.status)}</span>
+                    {b.status === 'rejected' && b.rejection_reason && (
+                      <div className="rejection-reason-note">เหตุผล: {b.rejection_reason}</div>
+                    )}
+                  </td>
                   <td>{b.approved_by_name || '-'}</td>
                   <td>
-                    <div className="table-actions">
-                      <button disabled={updatingId === b.id || isDecided} onClick={() => updateBookingStatus(b.id, 'approved')}>
-                        {updatingId === b.id ? '...' : 'อนุมัติ'}
-                      </button>
-                      <button className="danger-button" disabled={updatingId === b.id || isDecided} onClick={() => updateBookingStatus(b.id, 'rejected')}>ปฏิเสธ</button>
-                    </div>
+                    {rejectingId === b.id ? (
+                      <div className="reject-reason-form">
+                        <textarea
+                          placeholder="กรอกเหตุผลที่ปฏิเสธ..."
+                          value={rejectionReason}
+                          onChange={(e) => setRejectionReason(e.target.value)}
+                          rows={2}
+                          autoFocus
+                        />
+                        <div className="table-actions">
+                          <button className="danger-button" disabled={updatingId === b.id} onClick={() => handleConfirmReject(b.id)}>
+                            {updatingId === b.id ? '...' : 'ยืนยันปฏิเสธ'}
+                          </button>
+                          <button disabled={updatingId === b.id} onClick={handleCancelReject}>ยกเลิก</button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="table-actions">
+                        <button disabled={updatingId === b.id || isDecided} onClick={() => updateBookingStatus(b.id, 'approved')}>
+                          {updatingId === b.id ? '...' : 'อนุมัติ'}
+                        </button>
+                        <button className="danger-button" disabled={updatingId === b.id || isDecided} onClick={() => handleStartReject(b.id)}>ปฏิเสธ</button>
+                      </div>
+                    )}
                   </td>
                 </tr>
                 )
@@ -236,7 +273,40 @@ function BookingAdmin() {
           </table>
         </div>
       </section>
+
+      <BookingAdminStyles />
     </main>
+  )
+}
+
+// สไตล์เฉพาะฟอร์มกรอกเหตุผลปฏิเสธ — ใช้ CSS variables จริงของระบบ (:root)
+function BookingAdminStyles() {
+  return (
+    <style>{`
+      .reject-reason-form { display: flex; flex-direction: column; gap: 6px; min-width: 200px; }
+      .reject-reason-form textarea {
+        width: 100%;
+        padding: 8px 10px;
+        border: 1.5px solid var(--border-color);
+        border-radius: var(--radius-sm);
+        font-size: 13px;
+        color: var(--text-main);
+        background: rgba(15, 34, 28, 0.6);
+        outline: none;
+        font-family: var(--font-body);
+        resize: vertical;
+      }
+      .reject-reason-form textarea:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 4px var(--primary-light);
+      }
+      .rejection-reason-note {
+        margin-top: 4px;
+        font-size: 0.78rem;
+        color: var(--text-muted);
+        max-width: 220px;
+      }
+    `}</style>
   )
 }
 

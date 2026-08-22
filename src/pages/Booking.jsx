@@ -140,7 +140,17 @@ function Booking() {
         p_end_time: endISO
       })
 
-      if (error) { setMessage({ type: 'error', text: error.message }); setLoading(false); return }
+      if (error) {
+        // ✅ ห้องถูกจองซ้อนไปแล้วในเสี้ยววินาทีที่เผลอ (race condition) —
+        // ฐานข้อมูลจะปฏิเสธด้วย exclusion constraint "bookings_no_overlap" (23P01)
+        const isOverlap = error.code === '23P01' || error.message?.includes('bookings_no_overlap')
+        setMessage({
+          type: 'error',
+          text: isOverlap ? 'ช่วงเวลานี้เพิ่งถูกผู้ใช้อื่นจองไปแล้ว กรุณาเลือกเวลาใหม่' : error.message,
+        })
+        setLoading(false)
+        return
+      }
 
       setMessage({
         type: 'success',

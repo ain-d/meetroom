@@ -1,6 +1,7 @@
 ﻿import express from 'express'
 import cors from 'cors'
 import dotenv from 'dotenv'
+import rateLimit from 'express-rate-limit'
 import { createClient } from '@supabase/supabase-js'
 
 dotenv.config()
@@ -9,17 +10,21 @@ const app = express()
 app.use(cors())
 app.use(express.json())
 
+// ✅ จำกัดจำนวนคำขอต่อ IP เพื่อป้องกันการยิงถี่/สแปมใส่ endpoint ทั้งหมด
+const generalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 นาที
+  limit: 100,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { success: false, message: 'มีการเรียกใช้งานถี่เกินไป กรุณาลองใหม่ภายหลัง', error: 'RATE_LIMITED' },
+})
+app.use(generalLimiter)
+
 const supabaseUrl = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY
-const adminSetupCode = process.env.ADMIN_SETUP_CODE
 
 if (!supabaseUrl || !supabaseKey) {
   console.error('Missing Supabase URL or SUPABASE_SERVICE_ROLE_KEY in environment variables.')
-  process.exit(1)
-}
-
-if (!adminSetupCode) {
-  console.error('Missing ADMIN_SETUP_CODE in environment variables.')
   process.exit(1)
 }
 
@@ -99,46 +104,8 @@ app.post('/esp32/checkin', async (req, res) => {
   return res.json({ success: true, room_id: roomId, booking_id: bookingId, occupied, status: statusValue, statusRecord: statusResult.data })
 })
 
-app.post('/admin/setup', async (req, res) => {
-  const authHeader = req.headers.authorization || ''
-  const token = authHeader.startsWith('Bearer ') ? authHeader.split(' ')[1] : null
-  const { admin_code } = req.body
-
-  if (!token) {
-    return res.status(401).json({ success: false, message: 'Missing authorization token', error: 'AUTH_REQUIRED' })
-  }
-
-  if (!admin_code) {
-    return res.status(400).json({ success: false, message: 'admin_code is required', error: 'INVALID_ADMIN_CODE' })
-  }
-
-  const { data: userData, error: userError } = await supabaseAdmin.auth.getUser(token)
-  if (userError || !userData?.user) {
-    return res.status(401).json({ success: false, message: 'Invalid or expired session', error: 'AUTH_FAILED' })
-  }
-
-  if (admin_code !== adminSetupCode) {
-    return res.status(401).json({ success: false, message: 'Invalid admin code', error: 'INVALID_ADMIN_CODE' })
-  }
-
-  const userId = userData.user.id
-  const { data, error } = await supabaseAdmin
-    .from('users')
-    .update({ role: 'admin' })
-    .eq('id', userId)
-    .select('id, role')
-    .single()
-
-  if (error) {
-    return res.status(500).json({ success: false, message: 'Unable to promote user to admin.', error: error.message })
-  }
-
-  if (!data) {
-    return res.status(404).json({ success: false, message: 'User not found', error: 'USER_NOT_FOUND' })
-  }
-
-  return res.json({ success: true, user: data })
-})
+// ✅ /admin/setup ถูกลบออกแล้ว (ไม่เคยใช้งานได้จริงบน Vercel เพราะ server.js ไม่ได้ deploy อยู่ที่นั่น)
+// ต่อไปนี้ตั้ง admin คนใหม่ผ่าน Supabase Dashboard -> Table Editor -> users -> แก้คอลัมน์ role เอง
 
 const port = Number(process.env.PORT) || 4000
 app.listen(port, () => {

@@ -1,6 +1,10 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
+import useSubmitCooldown from '../hooks/useSubmitCooldown'
+
+// ✅ กันสมัครสมาชิกถี่ๆ (spam signup)
+const REGISTER_COOLDOWN_MS = 5000
 
 const initialForm = {
   fullName: '',
@@ -19,6 +23,7 @@ function Register() {
   const [loading, setLoading] = useState(false)
   const [processingImage, setProcessingImage] = useState(false)
   const [message, setMessage] = useState({ type: '', text: '' })
+  const checkCooldown = useSubmitCooldown(REGISTER_COOLDOWN_MS)
 
   const handleChange = (event) => {
     const { name, value } = event.target
@@ -112,6 +117,12 @@ function Register() {
 
   const handleSubmit = async (event) => {
     event.preventDefault()
+
+    const cooldown = checkCooldown()
+    if (!cooldown.ok) {
+      setMessage({ type: 'error', text: cooldown.message })
+      return
+    }
 
     if (!form.fullName.trim()) {
       setMessage({ type: 'error', text: 'กรุณากรอกชื่อ-นามสกุล' })

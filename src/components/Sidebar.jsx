@@ -34,7 +34,9 @@ function Sidebar({ open, onClose }) {
 
   useEffect(() => {
     let mounted = true
-    const load = async () => {
+    let channel = null
+
+    const init = async () => {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return
       const { data } = await supabase
@@ -42,25 +44,43 @@ function Sidebar({ open, onClose }) {
         .select('full_name, email, avatar_url, role')
         .eq('id', user.id)
         .maybeSingle()
-      if (mounted) setProfile(data)
+      if (!mounted) return
+      setProfile(data)
 
       if (data?.role === 'admin') {
-        const { count } = await supabase
-          .from('bookings')
-          .select('id', { count: 'exact', head: true })
-          .eq('status', 'pending')
-        if (mounted) setPendingCount(count || 0)
+        const loadCounts = async () => {
+          const { count } = await supabase
+            .from('bookings')
+            .select('id', { count: 'exact', head: true })
+            .eq('status', 'pending')
+          if (mounted) setPendingCount(count || 0)
 
-        // ✅ นับจำนวนปัญหาห้องที่ยังรอดำเนินการ เพื่อขึ้น badge เตือนแอดมิน
-        const { count: issueCount } = await supabase
-          .from('room_issues')
-          .select('id', { count: 'exact', head: true })
-          .eq('status', 'pending')
-        if (mounted) setPendingIssueCount(issueCount || 0)
+          // ✅ นับจำนวนปัญหาห้องที่ยังรอดำเนินการ เพื่อขึ้น badge เตือนแอดมิน
+          const { count: issueCount } = await supabase
+            .from('room_issues')
+            .select('id', { count: 'exact', head: true })
+            .eq('status', 'pending')
+          if (mounted) setPendingIssueCount(issueCount || 0)
+        }
+
+        await loadCounts()
+
+        // ✅ ฟังการเปลี่ยนแปลงแบบเรียลไทม์ เดิมตัวเลข badge จะโหลดแค่ตอน mount ครั้งเดียว
+        //    ทำให้ดูเหมือนอัปเดตช้า/ไม่อัปเดตจนกว่าจะเปลี่ยนหน้า (Sidebar remount ใหม่)
+        //    ตอนนี้ subscribe ฟังทั้งตาราง bookings และ room_issues แล้วนับใหม่ทันทีที่มีการเปลี่ยนแปลง
+        channel = supabase
+          .channel('sidebar-badges')
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'bookings' }, loadCounts)
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'room_issues' }, loadCounts)
+          .subscribe()
       }
     }
-    load()
-    return () => { mounted = false }
+
+    init()
+    return () => {
+      mounted = false
+      if (channel) supabase.removeChannel(channel)
+    }
   }, [])
 
   const handleLogout = async () => {

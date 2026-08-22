@@ -1,6 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { supabase } from "../lib/supabase"
+
+// ✅ ป้องกันการเดารหัสผ่านถี่ๆ (brute force) ฝั่ง client:
+// ผิดครบ MAX_ATTEMPTS ครั้งติดกัน ให้ล็อกไม่ให้ลองใหม่ชั่วคราว
+const MAX_ATTEMPTS = 5
+const LOCKOUT_MS = 60 * 1000
 
 function Login() {
   const navigate = useNavigate()
@@ -12,6 +17,8 @@ function Login() {
   const [loading, setLoading] = useState(false)
   const [checkingSession, setCheckingSession] = useState(true)
   const [message, setMessage] = useState({ type: '', text: '' })
+  const [failedAttempts, setFailedAttempts] = useState(0)
+  const lockUntilRef = useRef(0)
 
   // ✅ ปลายทางหลัง login สำเร็จ: ถ้ามี roomId ให้พาไปหน้าจองห้องนั้นเลย ไม่งั้นไปหน้า dashboard ปกติ
   const getRedirectPath = () => (roomId ? `/booking?room=${roomId}` : '/dashboard')
@@ -38,6 +45,14 @@ function Login() {
     event.preventDefault()
     setMessage({ type: '', text: '' })
 
+    // ✅ เช็คว่ากำลังโดนล็อกจากการลองผิดถี่ๆ อยู่หรือไม่
+    const now = Date.now()
+    if (now < lockUntilRef.current) {
+      const waitSec = Math.ceil((lockUntilRef.current - now) / 1000)
+      setMessage({ type: 'error', text: `เข้าสู่ระบบผิดหลายครั้งเกินไป กรุณารอ ${waitSec} วินาทีก่อนลองใหม่` })
+      return
+    }
+
     if (!email || !password) {
       setMessage({ type: 'error', text: 'กรุณากรอกอีเมลและรหัสผ่าน' })
       return
@@ -51,10 +66,20 @@ function Login() {
     })
 
     if (error) {
-      setMessage({ type: 'error', text: error.message })
+      const attempts = failedAttempts + 1
+      if (attempts >= MAX_ATTEMPTS) {
+        lockUntilRef.current = Date.now() + LOCKOUT_MS
+        setFailedAttempts(0)
+        setMessage({ type: 'error', text: `เข้าสู่ระบบผิดครบ ${MAX_ATTEMPTS} ครั้ง กรุณารอ 60 วินาทีก่อนลองใหม่` })
+      } else {
+        setFailedAttempts(attempts)
+        setMessage({ type: 'error', text: error.message })
+      }
       setLoading(false)
       return
     }
+
+    setFailedAttempts(0)
 
     if (!data.session) {
       setMessage({ type: 'error', text: 'เข้าสู่ระบบไม่สำเร็จ กรุณาตรวจสอบข้อมูลอีกครั้ง' })
